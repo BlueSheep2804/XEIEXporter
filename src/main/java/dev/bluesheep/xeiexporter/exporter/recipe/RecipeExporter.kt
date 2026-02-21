@@ -1,8 +1,8 @@
-package dev.bluesheep.xeiexporter.recipe
+package dev.bluesheep.xeiexporter.exporter.recipe
 
-import dev.bluesheep.xeiexporter.ExportUtil.mkdir
-import dev.bluesheep.xeiexporter.ExportUtil.resourceLocationToJson
-import dev.bluesheep.xeiexporter.ExportUtil.saveExportFile
+import dev.bluesheep.xeiexporter.exporter.ExportUtil.mkdir
+import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToJson
+import dev.bluesheep.xeiexporter.exporter.ExportUtil.saveExportFile
 import dev.bluesheep.xeiexporter.XEIExporter
 import net.minecraft.client.Minecraft
 import net.minecraft.world.item.crafting.ShapelessRecipe

@@ -1,4 +1,4 @@
-package dev.bluesheep.xeiexporter.resources
+package dev.bluesheep.xeiexporter.exporter.resources
 
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.pipeline.TextureTarget
@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexSorting
-import dev.bluesheep.xeiexporter.ExportUtil.resourceLocationToPath
+import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
 import dev.bluesheep.xeiexporter.XEIExporter
 import net.minecraft.Util
 import net.minecraft.client.Minecraft
@@ -52,11 +52,6 @@ class ItemRendererExporter {
         val imageMap = renderItems()
         Util.ioPool().execute {
             imageMap.forEach(::saveItems)
-//            { (itemId: ResourceLocation?, nativeImage: NativeImage?) ->
-//                this.saveItems(
-//                    itemId!!, nativeImage!!
-//                )
-//            }
         }
         pendingItemList.clear()
     }
@@ -124,7 +119,6 @@ class ItemRendererExporter {
             imageMap.put(pendingItemList[i].key.location(), image)
         }
 
-        //        saveItems(new ResourceLocation("temp", Integer.toString(itemCount)), nativeImage);
         nativeImage.close()
 
         renderTarget.destroyBuffers()

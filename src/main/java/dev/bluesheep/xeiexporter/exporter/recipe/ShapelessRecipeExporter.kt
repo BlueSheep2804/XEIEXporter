@@ -1,4 +1,4 @@
-package dev.bluesheep.xeiexporter.recipe
+package dev.bluesheep.xeiexporter.exporter.recipe
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
