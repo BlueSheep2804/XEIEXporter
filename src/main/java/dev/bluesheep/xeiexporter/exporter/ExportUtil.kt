@@ -4,13 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_ASSETS_DIR
-import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_DIR
 import dev.bluesheep.xeiexporter.exporter.recipe.RecipeExporter
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import net.minecraft.locale.Language
 import net.minecraft.resources.ResourceLocation
-import org.jetbrains.exposed.v1.jdbc.Database
-import org.postgresql.ds.PGSimpleDataSource
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
