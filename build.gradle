@@ -113,6 +113,8 @@ repositories {
 }
 
 dependencies {
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     implementation("thedarkcolour:kotlinforforge:4.12.0")
 
     jarJar(modRuntimeOnly("dev.bluesheep:exposed_provider:${exposed_version}"))
@@ -129,14 +131,9 @@ dependencies {
 }
 
 // Uncomment the lines below if you wish to configure mixin. The mixin file should be named modid.mixins.json.
-/*
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
-}
-
-dependencies {
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
@@ -144,7 +141,6 @@ jar {
             "MixinConfigs": "${mod_id}.mixins.json"
     ])
 }
-*/
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
