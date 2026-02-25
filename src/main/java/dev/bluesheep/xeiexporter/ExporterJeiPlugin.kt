@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation
 @JeiPlugin
 class ExporterJeiPlugin : IModPlugin {
     override fun getPluginUid(): ResourceLocation {
-        return ResourceLocation(XEIExporter.MODID, "jei_plugin")
+        return ResourceLocation.fromNamespaceAndPath(XEIExporter.MODID, "jei_plugin")
     }
 
     override fun onRuntimeAvailable(jeiRuntime: IJeiRuntime) {

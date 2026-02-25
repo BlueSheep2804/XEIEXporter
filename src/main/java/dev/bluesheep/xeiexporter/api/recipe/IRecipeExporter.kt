@@ -7,6 +7,8 @@ import net.minecraft.world.level.Level
 
 interface IRecipeExporter<T : Recipe<out Container>> {
     val recipeTypeId: ResourceLocation
+    val inputSize: Int
+    val outputSize: Int
 
     fun export(recipe: T, level: Level): RecipeData
 }

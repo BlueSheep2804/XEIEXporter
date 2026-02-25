@@ -6,13 +6,18 @@ import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
 import dev.bluesheep.xeiexporter.api.recipe.result.ItemRecipeResult
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.crafting.ShapelessRecipe
+import net.minecraft.world.item.crafting.CraftingRecipe
 import net.minecraft.world.level.Level
 
-class ShapelessRecipeExporter() : IRecipeExporter<ShapelessRecipe> {
-    override val recipeTypeId: ResourceLocation = rlVanilla("crafting_shapeless")
+class CraftingRecipeExporter() : IRecipeExporter<CraftingRecipe> {
+    override val recipeTypeId: ResourceLocation = rlVanilla("crafting")
+    override val inputSize: Int = 9
+    override val outputSize: Int = 1
 
-    override fun export(recipe: ShapelessRecipe, level: Level): RecipeData {
+    override fun export(
+        recipe: CraftingRecipe,
+        level: Level
+    ): RecipeData {
         val ingredients = recipe.ingredients.map { ItemRecipeIngredient(it) }
         return RecipeData(
             recipe.id,

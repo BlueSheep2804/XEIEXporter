@@ -9,6 +9,9 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe
 import net.minecraft.world.level.Level
 
 class CookingRecipeExporter<T : AbstractCookingRecipe>(override val recipeTypeId: ResourceLocation) : IRecipeExporter<T> {
+    override val inputSize: Int = 1
+    override val outputSize: Int = 1
+
     override fun export(recipe: T, level: Level): RecipeData {
         val inputs = recipe.ingredients.map { ItemRecipeIngredient(it) }
         val result = ItemRecipeResult(recipe.getResultItem(level.registryAccess()))
