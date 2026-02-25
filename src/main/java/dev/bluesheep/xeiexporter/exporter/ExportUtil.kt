@@ -77,4 +77,9 @@ object ExportUtil {
     fun exportLanguages() {
         saveExportFile(Language.getInstance().languageData, EXPORT_LANG_FILE)
     }
+
+    @JvmStatic
+    fun rlVanilla(path: String): ResourceLocation {
+        return ResourceLocation.withDefaultNamespace(path)
+    }
 }
