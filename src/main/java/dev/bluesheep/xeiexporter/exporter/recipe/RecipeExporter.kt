@@ -33,6 +33,7 @@ class RecipeExporter {
         recipeExporterRegistry.put(SmeltingRecipe::class.java, CookingRecipeExporter<SmeltingRecipe>(rlVanilla("smelting")))
         recipeExporterRegistry.put(BlastingRecipe::class.java, CookingRecipeExporter<BlastingRecipe>(rlVanilla("blasting")))
         recipeExporterRegistry.put(SmokingRecipe::class.java, CookingRecipeExporter<SmokingRecipe>(rlVanilla("smoking")))
+        recipeExporterRegistry.put(CampfireCookingRecipe::class.java, CampfireRecipeExporter())
         recipeExporterRegistry.put(CraftingRecipe::class.java, CraftingRecipeExporter())
     }
 
