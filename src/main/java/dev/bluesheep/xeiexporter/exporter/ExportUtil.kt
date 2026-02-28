@@ -17,6 +17,7 @@ object ExportUtil {
     private val EXPORT_LANG_FILE: Path = EXPORT_ASSETS_DIR.resolve("lang.json")
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val recipeExporter = RecipeExporter()
+    private val tagExporter = TagExporter()
 
     fun export(): Int {
         EXPORT_ASSETS_DIR.toFile().mkdirs()
@@ -25,6 +26,7 @@ object ExportUtil {
 
         exportLanguages()
         ItemExporter.exportItems()
+        tagExporter.export()
         recipeExporter.exportRecipes()
 
         return 0

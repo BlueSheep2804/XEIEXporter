@@ -8,6 +8,7 @@ import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.mkdir
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.saveExportFile
+import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import dev.bluesheep.xeiexporter.sql.RecipeTypeTable
 import dev.bluesheep.xeiexporter.sql.RecipesTable
 import net.minecraft.client.Minecraft
@@ -15,9 +16,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraftforge.registries.ForgeRegistries
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.batchInsert
-import org.jetbrains.exposed.v1.jdbc.exists
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.nio.file.Path
 
@@ -55,10 +54,8 @@ class RecipeExporter {
 
         // DBに書き込み
         transaction {
-            if (RecipesTable.exists()) {
-                SchemaUtils.drop(RecipesTable)
-            }
-            SchemaUtils.create(RecipesTable)
+            DatabaseUtil.reset(RecipesTable)
+
             RecipesTable.batchInsert(recipes) {
                 this[RecipesTable.namespace] = it.id.namespace
                 this[RecipesTable.path] = it.id.path
@@ -67,10 +64,7 @@ class RecipeExporter {
                 this[RecipesTable.output] = it.output.map { output -> output.export() }
             }
 
-            if (RecipeTypeTable.exists()) {
-                SchemaUtils.drop(RecipeTypeTable)
-            }
-            SchemaUtils.create(RecipeTypeTable)
+            DatabaseUtil.reset(RecipeTypeTable)
 
             val runtime = ExporterJeiPlugin.runtime ?: return@transaction
             val recipeTypes = runtime.jeiHelpers.allRecipeTypes.toList().map { recipeType ->
