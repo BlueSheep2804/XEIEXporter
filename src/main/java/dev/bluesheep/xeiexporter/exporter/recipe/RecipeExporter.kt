@@ -60,7 +60,7 @@ class RecipeExporter {
                 this[RecipesTable.namespace] = it.id.namespace
                 this[RecipesTable.path] = it.id.path
                 this[RecipesTable.type] = it.type.toString()
-                this[RecipesTable.input] = it.input.map { input -> input.export().joinToString() }
+                this[RecipesTable.input] = it.input.map { input -> input.export().joinToString(",") }
                 this[RecipesTable.output] = it.output.map { output -> output.export() }
             }
 

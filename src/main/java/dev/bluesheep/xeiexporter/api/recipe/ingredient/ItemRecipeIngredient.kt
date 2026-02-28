@@ -16,7 +16,7 @@ class ItemRecipeIngredient(val ingredient: Ingredient) : AbstractRecipeIngredien
             if (it is Ingredient.TagValue) {
                 "#" + it.serialize().get("tag").asString
             } else {
-                it.items.joinToString { itemStack ->
+                it.items.joinToString(",") { itemStack ->
                     val count = if (itemStack.count > 1) "${itemStack.count}x " else ""
                     "${count}${ForgeRegistries.ITEMS.getKey(itemStack.item)}"
                 }
