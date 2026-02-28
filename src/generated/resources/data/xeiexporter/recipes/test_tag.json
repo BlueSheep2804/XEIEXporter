@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": [
+      {
+        "item": "minecraft:barrier"
+      },
+      {
+        "tag": "minecraft:emerald_ores"
+      }
+    ],
+    "B": {
+      "tag": "minecraft:pickaxes"
+    },
+    "C": [
+      {
+        "item": "minecraft:command_block_minecart"
+      },
+      {
+        "item": "minecraft:spyglass"
+      }
+    ]
+  },
+  "pattern": [
+    "A ",
+    " B",
+    "C "
+  ],
+  "result": {
+    "count": 2,
+    "item": "minecraft:debug_stick"
+  },
+  "show_notification": true
+}

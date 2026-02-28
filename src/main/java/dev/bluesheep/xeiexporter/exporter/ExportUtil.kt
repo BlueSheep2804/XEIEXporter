@@ -81,6 +81,11 @@ object ExportUtil {
     }
 
     @JvmStatic
+    fun rl(path: String): ResourceLocation {
+        return ResourceLocation.fromNamespaceAndPath(XEIExporter.MODID, path)
+    }
+
+    @JvmStatic
     fun rlVanilla(path: String): ResourceLocation {
         return ResourceLocation.withDefaultNamespace(path)
     }

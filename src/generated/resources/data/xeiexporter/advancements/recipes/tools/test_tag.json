@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "xeiexporter:test_tag"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "test_tag": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:debug_stick"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "test_tag",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "xeiexporter:test_tag"
+    ]
+  },
+  "sends_telemetry_event": false
+}
