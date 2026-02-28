@@ -19,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.nio.file.Path
+import kotlin.jvm.optionals.getOrElse
 
 class RecipeExporter {
     companion object {
@@ -68,7 +69,8 @@ class RecipeExporter {
 
             val runtime = ExporterJeiPlugin.runtime ?: return@transaction
             val recipeTypes = runtime.jeiHelpers.allRecipeTypes.toList().map { recipeType ->
-                val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get().map { it.itemStack.get() }.toList()
+                val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()
+                    .map { it.itemStack.getOrElse { ItemStack.EMPTY } }.toList()
                 val exporter = recipeExporterRegistry[recipeType.recipeClass] ?: return@map RecipeTypeData.EMPTY
                 return@map RecipeTypeData(
                     exporter.recipeTypeId,
