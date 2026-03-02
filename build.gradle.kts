@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.utils.extendsFrom
+import org.slf4j.event.Level
 
 plugins {
     id ("idea")
@@ -92,7 +93,7 @@ legacyForge {
 
             jvmArgument("-XX:+AllowEnhancedClassRedefinition")
 
-            logLevel = org.slf4j.event.Level.DEBUG
+            logLevel = Level.DEBUG
         }
     }
 
@@ -116,7 +117,7 @@ repositories {
     mavenLocal()
 
     flatDir {
-        dir("libs")
+        dir("exposed/build/libs")
     }
 
     maven {
@@ -140,7 +141,7 @@ dependencies {
 
     implementation("thedarkcolour:kotlinforforge:4.12.0")
 
-    jarJar(modRuntimeOnly("dev.bluesheep:exposed_provider:${ModInfo.exposed_version}")!!)
+    jarJar(modRuntimeOnly("dev.bluesheep:exposed_provider:${ModInfo.exposed_version}:all")!!)
     compileOnly("org.jetbrains.exposed:exposed-core:${ModInfo.exposed_version}")
     compileOnly("org.jetbrains.exposed:exposed-dao:${ModInfo.exposed_version}")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:${ModInfo.exposed_version}")
@@ -162,6 +163,10 @@ tasks.named<Jar>("jar").configure {
     manifest.attributes(mapOf(
             "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
     ))
+}
+
+tasks.jarJar {
+    dependsOn(":exposed:shadowJar")
 }
 
 var generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
