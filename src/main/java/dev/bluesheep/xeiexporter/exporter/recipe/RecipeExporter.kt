@@ -1,7 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.ExporterJeiPlugin
-import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeExporter
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
@@ -15,7 +14,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import java.nio.file.Path
+import java.util.stream.Stream
 import kotlin.jvm.optionals.getOrElse
 
 class RecipeExporter {
@@ -40,6 +39,37 @@ class RecipeExporter {
             recipes.add(recipeData)
         }
 
+        // レシピタイプの出力
+        val runtime = ExporterJeiPlugin.runtime
+        val recipeTypes = mutableListOf<RecipeTypeData>()
+        runtime?.jeiHelpers?.allRecipeTypes?.toList()?.forEach { recipeType ->
+            val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()
+                .map { it.itemStack.getOrElse { ItemStack.EMPTY } }.toList()
+            val exporter = recipeExporterRegistry[recipeType.recipeClass] ?: return@forEach
+
+            val findResult = recipeTypes.find { it.id == exporter.recipeTypeId }
+            if (findResult != null) {
+                val index = recipeTypes.indexOf(findResult)
+                val newCatalyst = Ingredient.fromValues(Stream.of(
+                    *findResult.catalyst.ingredient.values,
+                    *catalyst.map { Ingredient.ItemValue(it) }.toTypedArray()
+                ))
+                recipeTypes[index] = RecipeTypeData(
+                    findResult.id,
+                    ItemRecipeIngredient(newCatalyst),
+                    findResult.inputSize,
+                    findResult.outputSize
+                )
+            } else {
+                recipeTypes.add(RecipeTypeData(
+                    exporter.recipeTypeId,
+                    ItemRecipeIngredient(catalyst),
+                    exporter.inputSize,
+                    exporter.outputSize
+                ))
+            }
+        }
+
         // DBに書き込み
         transaction {
             DatabaseUtil.reset(RecipesTable)
@@ -54,19 +84,7 @@ class RecipeExporter {
 
             DatabaseUtil.reset(RecipeTypeTable)
 
-            val runtime = ExporterJeiPlugin.runtime ?: return@transaction
-            val recipeTypes = runtime.jeiHelpers.allRecipeTypes.toList().map { recipeType ->
-                val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()
-                    .map { it.itemStack.getOrElse { ItemStack.EMPTY } }.toList()
-                val exporter = recipeExporterRegistry[recipeType.recipeClass] ?: return@map RecipeTypeData.EMPTY
-                return@map RecipeTypeData(
-                    exporter.recipeTypeId,
-                    ItemRecipeIngredient(catalyst),
-                    exporter.inputSize,
-                    exporter.outputSize
-                )
-            }
-            RecipeTypeTable.batchInsert(recipeTypes.filterNot { it == RecipeTypeData.EMPTY }) {
+            RecipeTypeTable.batchInsert(recipeTypes) {
                 this[RecipeTypeTable.id] = it.id.toString()
                 this[RecipeTypeTable.catalyst] = it.catalyst.export()
                 this[RecipeTypeTable.inputSize] = it.inputSize
