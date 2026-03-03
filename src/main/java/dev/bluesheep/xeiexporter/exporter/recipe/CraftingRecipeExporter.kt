@@ -1,5 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
+import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeExporter
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
@@ -25,22 +26,26 @@ class CraftingRecipeExporter() : IRecipeExporter<CraftingRecipe> {
         val ingredients = NonNullList.withSize(9, Ingredient.EMPTY)
         when (recipe) {
             is ShapedRecipe -> {
-                when (recipe.width) {
-                    1 -> {
-                        recipe.ingredients.forEachIndexed { index, ingredient ->
-                            ingredients[1 + index * 3] = ingredient
+                if (recipe.width <= 3 && recipe.height <= 3) {
+                    when (recipe.width) {
+                        1 -> {
+                            recipe.ingredients.forEachIndexed { index, ingredient ->
+                                ingredients[1 + index * 3] = ingredient
+                            }
+                        }
+                        2 -> {
+                            recipe.ingredients.forEachIndexed { index, ingredient ->
+                                ingredients[(index % 2) + (index / 2 * 3)] = ingredient
+                            }
+                        }
+                        3 -> {
+                            recipe.ingredients.forEachIndexed { index, ingredient ->
+                                ingredients[index] = ingredient
+                            }
                         }
                     }
-                    2 -> {
-                        recipe.ingredients.forEachIndexed { index, ingredient ->
-                            ingredients[(index % 2) + (index / 2 * 3)] = ingredient
-                        }
-                    }
-                    3 -> {
-                        recipe.ingredients.forEachIndexed { index, ingredient ->
-                            ingredients[index] = ingredient
-                        }
-                    }
+                } else {
+                    XEIExporter.LOGGER.warn("Exceeds 3x3 limit: ${recipe.id}")
                 }
             }
             is ShapelessRecipe -> {
