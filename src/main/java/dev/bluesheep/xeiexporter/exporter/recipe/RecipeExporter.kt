@@ -5,9 +5,7 @@ import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeExporter
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
-import dev.bluesheep.xeiexporter.exporter.ExportUtil.mkdir
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
-import dev.bluesheep.xeiexporter.exporter.ExportUtil.saveExportFile
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import dev.bluesheep.xeiexporter.sql.RecipeTypeTable
 import dev.bluesheep.xeiexporter.sql.RecipesTable
@@ -15,18 +13,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
-import net.minecraftforge.registries.ForgeRegistries
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrElse
 
 class RecipeExporter {
-    companion object {
-        private val EXPORT_RECIPES_DIR: Path = XEIExporter.EXPORT_DIR.resolve("recipes")
-        private val EXPORT_RECIPE_TYPE_FILE: Path = EXPORT_RECIPES_DIR.resolve("recipe_types.json")
-    }
-
     private val recipeExporterRegistry = mutableMapOf<Class<out Recipe<*>>, IRecipeExporter<*>>()
 
     init {
@@ -39,11 +31,6 @@ class RecipeExporter {
 
     fun exportRecipes() {
         val level = Minecraft.getInstance().level ?: return
-
-        mkdir(EXPORT_RECIPES_DIR)
-
-        val recipeTypes = ForgeRegistries.RECIPE_TYPES.entries.map { (key, _) -> key.location().toString() }
-        saveExportFile(recipeTypes, EXPORT_RECIPE_TYPE_FILE)
 
         // Exporterが登録されているレシピをRecipeDataとして出力
         val recipes = mutableListOf<RecipeData>()
