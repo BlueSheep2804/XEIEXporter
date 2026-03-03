@@ -146,7 +146,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-dao:${ModInfo.exposed_version}")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:${ModInfo.exposed_version}")
 
-    implementation("org.postgresql:postgresql:42.7.7")
+    jarJar(implementation("org.postgresql:postgresql:42.7.7")!!)
     "additionalRuntimeClasspath"("org.postgresql:postgresql:42.7.7")
 
     modCompileOnly("mezz.jei:jei-${ModInfo.minecraft_version}-common-api:${ModInfo.jei_version}")
