@@ -55,7 +55,7 @@ legacyForge {
         minecraftVersion = ModInfo.minecraft_version
     }
 
-    // accessTransformers = project.files("src/main/resources/META-INF/accesstransformer.cfg")
+    accessTransformers.from(project.files("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         register("client") {
@@ -154,16 +154,16 @@ dependencies {
     "modLocalRuntime"("mezz.jei:jei-${ModInfo.minecraft_version}-forge:${ModInfo.jei_version}")
 }
 
-mixin {
-    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
-    config("${ModInfo.mod_id}.mixins.json")
-}
-
-tasks.named<Jar>("jar").configure {
-    manifest.attributes(mapOf(
-            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
-    ))
-}
+//mixin {
+//    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
+//    config("${ModInfo.mod_id}.mixins.json")
+//}
+//
+//tasks.named<Jar>("jar").configure {
+//    manifest.attributes(mapOf(
+//            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
+//    ))
+//}
 
 tasks.jarJar {
     dependsOn(":exposed:shadowJar")
