@@ -14,10 +14,6 @@ object ItemExporter {
     fun exportItems() {
         val itemsEntries = ForgeRegistries.ITEMS.getEntries()
         exportItem(itemsEntries)
-
-        val itemRendererExporter = ItemRendererExporter()
-        itemsEntries.forEach(itemRendererExporter::addItem)
-        itemRendererExporter.end()
     }
 
     private fun exportItem(entries: Set<Map.Entry<ResourceKey<Item>, Item>>) {

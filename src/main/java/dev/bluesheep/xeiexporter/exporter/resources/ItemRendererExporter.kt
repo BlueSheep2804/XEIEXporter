@@ -17,29 +17,34 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraftforge.registries.ForgeRegistries
 import org.joml.Matrix4f
 import java.io.IOException
 import java.nio.file.Path
 
-class ItemRendererExporter {
-    companion object {
-        private val EXPORT_ITEM_RENDERER_DIR: Path = XEIExporter.EXPORT_ASSETS_DIR.resolve("items")
-        private const val EXPORT_COUNT = 16
-        private val skullIngredient: Ingredient = Ingredient.of(
-            Items.SKELETON_SKULL,
-            Items.WITHER_SKELETON_SKULL,
-            Items.CREEPER_HEAD,
-            Items.PIGLIN_HEAD,
-            Items.DRAGON_HEAD,
-            Items.PLAYER_HEAD,
-            Items.ZOMBIE_HEAD
-        )
-    }
+object ItemRendererExporter {
+    private val EXPORT_ITEM_RENDERER_DIR: Path = XEIExporter.EXPORT_ASSETS_DIR.resolve("items")
+    private const val EXPORT_COUNT = 16
+    private val skullIngredient: Ingredient = Ingredient.of(
+        Items.SKELETON_SKULL,
+        Items.WITHER_SKELETON_SKULL,
+        Items.CREEPER_HEAD,
+        Items.PIGLIN_HEAD,
+        Items.DRAGON_HEAD,
+        Items.PLAYER_HEAD,
+        Items.ZOMBIE_HEAD
+    )
 
     private val pendingItemList = mutableListOf<MutableMap.MutableEntry<ResourceKey<Item>, Item>>()
     private var itemCount = 0
 
-    fun addItem(itemEntry: MutableMap.MutableEntry<ResourceKey<Item>, Item>) {
+    fun export() {
+        val itemsEntries = ForgeRegistries.ITEMS.entries
+        itemsEntries.forEach(::addItem)
+        end()
+    }
+
+    private fun addItem(itemEntry: MutableMap.MutableEntry<ResourceKey<Item>, Item>) {
         pendingItemList.add(itemEntry)
         itemCount++
 
@@ -56,8 +61,10 @@ class ItemRendererExporter {
         pendingItemList.clear()
     }
 
-    fun end() {
+    private fun end() {
         exportItemIcon()
+        pendingItemList.clear()
+        itemCount = 0
     }
 
     private fun renderItems(): Map<ResourceLocation, NativeImage> {
