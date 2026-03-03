@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.bluesheep.xeiexporter.mixin",
+  "refmap": "xeiexporter.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "IngredientAccessor"
