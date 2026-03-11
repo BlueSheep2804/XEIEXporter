@@ -6,8 +6,8 @@ import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_ASSETS_DIR
 import dev.bluesheep.xeiexporter.exporter.recipe.RecipeExporter
 import dev.bluesheep.xeiexporter.exporter.resources.ItemRendererExporter
+import dev.bluesheep.xeiexporter.exporter.resources.LanguageExporter
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
-import net.minecraft.locale.Language
 import net.minecraft.resources.ResourceLocation
 import java.io.File
 import java.io.IOException
@@ -15,7 +15,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object ExportUtil {
-    private val EXPORT_LANG_FILE: Path = EXPORT_ASSETS_DIR.resolve("lang.json")
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val recipeExporter = RecipeExporter()
     private val tagExporter = TagExporter()
@@ -33,7 +32,7 @@ object ExportUtil {
     fun exportClient(): Int {
         EXPORT_ASSETS_DIR.toFile().mkdirs()
 
-        exportLanguages()
+        LanguageExporter.export()
         ItemRendererExporter.export()
 
         return 0
@@ -80,10 +79,6 @@ object ExportUtil {
     @JvmStatic
     fun resourceLocationToJson(base: Path, resourceLocation: ResourceLocation): Path {
         return resourceLocationToPath(base, resourceLocation, ".json")
-    }
-
-    private fun exportLanguages() {
-        saveExportFile(Language.getInstance().languageData, EXPORT_LANG_FILE)
     }
 
     @JvmStatic

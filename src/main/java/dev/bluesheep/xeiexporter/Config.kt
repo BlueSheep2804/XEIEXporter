@@ -25,5 +25,9 @@ object Config {
         .comment("Database password")
         .define("databasePassword", "postgres")
 
+    val EXPORT_LANGUAGES: ForgeConfigSpec.ConfigValue<List<String>> = BUILDER
+        .comment("List of languages to export.")
+        .defineList("exportLanguages", listOf("en_us")) { true }
+
     val SPEC: ForgeConfigSpec = BUILDER.build()
 }
