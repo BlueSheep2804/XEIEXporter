@@ -2,7 +2,7 @@ package dev.bluesheep.xeiexporter.exporter.resources
 
 import dev.bluesheep.xeiexporter.Config
 import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_ASSETS_DIR
-import dev.bluesheep.xeiexporter.exporter.ExportUtil.saveExportFile
+import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.language.ClientLanguage
@@ -12,6 +12,8 @@ object LanguageExporter {
     private val EXPORT_LANG_DIR = EXPORT_ASSETS_DIR.resolve("lang")
 
     fun export() {
+        ExportUtil.mkdir(EXPORT_LANG_DIR)
+
         val minecraft = Minecraft.getInstance()
         Config.EXPORT_LANGUAGES.get().forEach { langName ->
             if (minecraft.languageManager.getLanguage(langName) == null) {
@@ -27,7 +29,7 @@ object LanguageExporter {
                 false
             ).languageData.mapValues(::escape).toSortedMap()
 
-            saveExportFile(lang, EXPORT_LANG_DIR.resolve("$langName.json"))
+            ExportUtil.saveExportFile(lang, EXPORT_LANG_DIR.resolve("$langName.json"))
         }
     }
 

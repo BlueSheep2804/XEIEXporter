@@ -42,8 +42,8 @@ object ExportUtil {
     fun saveExportFile(src: Any?, path: Path) {
         try {
             Files.writeString(path, gson.toJson(src))
-        } catch (_: IOException) {
-            XEIExporter.LOGGER.warn("export failed")
+        } catch (error: IOException) {
+            XEIExporter.LOGGER.warn("export failed: ${error.toString()}")
         }
     }
 
