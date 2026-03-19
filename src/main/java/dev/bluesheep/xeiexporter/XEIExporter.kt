@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.config.ModConfig
+import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.fml.loading.FMLPaths
 import org.slf4j.Logger
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
@@ -34,9 +35,11 @@ object XEIExporter {
 
         FORGE_BUS.register(this)
 
-        DebugRegister.BLOCKS.register(modEventBus)
-        DebugRegister.ITEMS.register(modEventBus)
-        DebugRegister.CREATIVE_MODE_TABS.register(modEventBus)
+        if (!FMLLoader.isProduction()) {
+            DebugRegister.BLOCKS.register(modEventBus)
+            DebugRegister.ITEMS.register(modEventBus)
+            DebugRegister.CREATIVE_MODE_TABS.register(modEventBus)
+        }
 
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Config.SPEC)
     }

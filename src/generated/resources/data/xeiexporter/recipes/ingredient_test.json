@@ -15,10 +15,10 @@
     },
     "C": [
       {
-        "item": "minecraft:command_block_minecart"
+        "item": "minecraft:structure_block"
       },
       {
-        "item": "minecraft:spyglass"
+        "item": "minecraft:structure_void"
       }
     ]
   },

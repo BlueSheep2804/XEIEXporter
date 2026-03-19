@@ -38,9 +38,9 @@ object DebugDataGen {
                     Ingredient.TagValue(ItemTags.EMERALD_ORES)
                 )))
                 .define('B', ItemTags.PICKAXES)
-                .define('C', Ingredient.of(Items.COMMAND_BLOCK_MINECART, Items.SPYGLASS))
-                .unlockedBy("test_tag", has(Items.DEBUG_STICK))
-                .save(recipeOutput, rl("test_tag"))
+                .define('C', Ingredient.of(Items.STRUCTURE_BLOCK, Items.STRUCTURE_VOID))
+                .unlockedBy("ingredient_test", has(Items.DEBUG_STICK))
+                .save(recipeOutput, rl("ingredient_test"))
         }
     }
 }

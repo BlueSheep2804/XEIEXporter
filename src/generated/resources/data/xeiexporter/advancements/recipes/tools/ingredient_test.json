@@ -3,11 +3,11 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "xeiexporter:test_tag"
+        "recipe": "xeiexporter:ingredient_test"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
-    "test_tag": {
+    "ingredient_test": {
       "conditions": {
         "items": [
           {
@@ -22,13 +22,13 @@
   },
   "requirements": [
     [
-      "test_tag",
+      "ingredient_test",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "xeiexporter:test_tag"
+      "xeiexporter:ingredient_test"
     ]
   },
   "sends_telemetry_event": false
