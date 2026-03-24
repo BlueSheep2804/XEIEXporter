@@ -22,6 +22,7 @@ object ExportUtil {
     fun export(): Int {
         DatabaseUtil.connect()
 
+        ModInfoExporter.export()
         ItemExporter.exportItems()
         tagExporter.export()
         recipeExporter.exportRecipes()
