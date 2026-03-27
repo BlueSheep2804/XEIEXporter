@@ -24,6 +24,7 @@ object ExportUtil {
 
         ModInfoExporter.export()
         ItemExporter.exportItems()
+        FluidExporter.export()
         tagExporter.export()
         recipeExporter.exportRecipes()
 

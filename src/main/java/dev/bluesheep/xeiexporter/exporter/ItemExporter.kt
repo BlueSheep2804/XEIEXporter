@@ -9,7 +9,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object ItemExporter {
     fun exportItems() {
-        val itemsEntries = ForgeRegistries.ITEMS.getEntries()
+        val itemsEntries = ForgeRegistries.ITEMS.entries
 
         transaction {
             DatabaseUtil.reset(ItemsTable)
