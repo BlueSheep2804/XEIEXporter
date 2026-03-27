@@ -134,6 +134,13 @@ repositories {
             includeGroup("thedarkcolour")
         }
     }
+    maven {
+        name = "Modrinth"
+        url = uri("https://api.modrinth.com/maven")
+        content {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 dependencies {
@@ -152,6 +159,10 @@ dependencies {
     modCompileOnly("mezz.jei:jei-${ModInfo.minecraft_version}-common-api:${ModInfo.jei_version}")
     modCompileOnly("mezz.jei:jei-${ModInfo.minecraft_version}-forge-api:${ModInfo.jei_version}")
     "modLocalRuntime"("mezz.jei:jei-${ModInfo.minecraft_version}-forge:${ModInfo.jei_version}")
+
+    "modLocalRuntime"("maven.modrinth:create:mc1.20.1-6.0.8")
+    "modLocalRuntime"("maven.modrinth:ae2:7KVs6HMQ")
+    "modLocalRuntime"("maven.modrinth:guideme:20.1.14")
 }
 
 //mixin {
