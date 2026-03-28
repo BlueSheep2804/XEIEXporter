@@ -6,7 +6,7 @@ import mezz.jei.api.runtime.IJeiRuntime
 import net.minecraft.resources.ResourceLocation
 
 @JeiPlugin
-class ExporterJeiPlugin : IModPlugin {
+class JEIExporterPlugin : IModPlugin {
     override fun getPluginUid(): ResourceLocation {
         return ResourceLocation.fromNamespaceAndPath(XEIExporter.MODID, "jei_plugin")
     }

@@ -1,6 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
-import dev.bluesheep.xeiexporter.ExporterJeiPlugin
+import dev.bluesheep.xeiexporter.JEIExporterPlugin
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeExporter
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
@@ -40,7 +40,7 @@ class RecipeExporter {
         }
 
         // レシピタイプの出力
-        val runtime = ExporterJeiPlugin.runtime
+        val runtime = JEIExporterPlugin.runtime
         val recipeTypes = mutableListOf<RecipeTypeData>()
         runtime?.jeiHelpers?.allRecipeTypes?.toList()?.forEach { recipeType ->
             val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()

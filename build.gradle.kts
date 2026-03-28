@@ -158,23 +158,23 @@ dependencies {
 
     modCompileOnly("mezz.jei:jei-${ModInfo.minecraft_version}-common-api:${ModInfo.jei_version}")
     modCompileOnly("mezz.jei:jei-${ModInfo.minecraft_version}-forge-api:${ModInfo.jei_version}")
-    "modLocalRuntime"("mezz.jei:jei-${ModInfo.minecraft_version}-forge:${ModInfo.jei_version}")
+    modImplementation("mezz.jei:jei-${ModInfo.minecraft_version}-forge:${ModInfo.jei_version}")
 
     "modLocalRuntime"("maven.modrinth:create:mc1.20.1-6.0.8")
     "modLocalRuntime"("maven.modrinth:ae2:7KVs6HMQ")
     "modLocalRuntime"("maven.modrinth:guideme:20.1.14")
 }
 
-//mixin {
-//    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
-//    config("${ModInfo.mod_id}.mixins.json")
-//}
-//
-//tasks.named<Jar>("jar").configure {
-//    manifest.attributes(mapOf(
-//            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
-//    ))
-//}
+mixin {
+    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
+    config("${ModInfo.mod_id}.mixins.json")
+}
+
+tasks.named<Jar>("jar").configure {
+    manifest.attributes(mapOf(
+            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
+    ))
+}
 
 tasks.jarJar {
     dependsOn(":exposed:shadowJar")
