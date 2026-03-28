@@ -5,10 +5,11 @@ import com.google.gson.GsonBuilder
 import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_ASSETS_DIR
 import dev.bluesheep.xeiexporter.exporter.recipe.RecipeExporter
-import dev.bluesheep.xeiexporter.exporter.resources.ItemRendererExporter
 import dev.bluesheep.xeiexporter.exporter.resources.LanguageExporter
+import dev.bluesheep.xeiexporter.exporter.resources.RenderExporter
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import net.minecraft.resources.ResourceLocation
+import net.minecraftforge.common.util.Lazy
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -18,6 +19,7 @@ object ExportUtil {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val recipeExporter = RecipeExporter()
     private val tagExporter = TagExporter()
+    private val renderExporter = Lazy.of { RenderExporter() }
 
     fun export(): Int {
         DatabaseUtil.connect()
@@ -35,7 +37,7 @@ object ExportUtil {
         EXPORT_ASSETS_DIR.toFile().mkdirs()
 
         LanguageExporter.export()
-        ItemRendererExporter.export()
+        renderExporter.get().export()
 
         return 0
     }
