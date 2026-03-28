@@ -11,6 +11,7 @@ class RenderExporter {
 
     init {
         renderers.add(ItemRenderer())
+        renderers.add(FluidRenderer())
     }
 
     fun export() {
