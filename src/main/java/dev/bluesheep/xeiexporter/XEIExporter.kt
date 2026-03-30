@@ -1,16 +1,9 @@
 package dev.bluesheep.xeiexporter
 
 import com.mojang.logging.LogUtils
-import dev.bluesheep.xeiexporter.api.recipe.RecipeData
-import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
-import dev.bluesheep.xeiexporter.api.recipe.result.ItemRecipeResult
 import dev.bluesheep.xeiexporter.debug.DebugRegister
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
-import dev.bluesheep.xeiexporter.exporter.recipe.JEIRecipeHandler
-import mezz.jei.api.recipe.RecipeIngredientRole
 import net.minecraft.commands.Commands
-import net.minecraft.commands.arguments.ResourceLocationArgument
-import net.minecraft.network.chat.Component
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RegisterClientCommandsEvent
 import net.minecraftforge.event.RegisterCommandsEvent
@@ -57,32 +50,6 @@ object XEIExporter {
             Commands.literal("export").executes { context ->
                 return@executes ExportUtil.export()
             }
-        )
-
-        event.dispatcher.register(
-            Commands.literal("export_recipes")
-                .then(Commands.argument("recipe_type", ResourceLocationArgument.id()).executes { context ->
-                    if (context.source.isPlayer) {
-                        context.nodes.forEach { context.source.player?.sendSystemMessage(Component.literal(it.range.get(context.input))) }
-                    }
-
-                    val recipeType = ResourceLocationArgument.getId(context, "recipe_type")
-                    val recipes = mutableListOf<RecipeData>()
-                    JEIRecipeHandler.getRecipes(recipeType).forEach { recipeId, recipeLayout ->
-                        recipes.add(RecipeData(
-                            recipeId,
-                            recipeType,
-                            recipeLayout.recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT).map {
-                                ItemRecipeIngredient(it.itemStacks.toList())
-                            },
-                            recipeLayout.recipeSlotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map {
-                                ItemRecipeResult(it.itemStacks.toList().first())
-                            }
-                        ))
-                    }
-
-                    return@executes 0
-                })
         )
     }
 

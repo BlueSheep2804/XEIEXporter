@@ -94,4 +94,9 @@ object ExportUtil {
     fun rlVanilla(path: String): ResourceLocation {
         return ResourceLocation.withDefaultNamespace(path)
     }
+
+    @JvmStatic
+    fun rlJei(path: String): ResourceLocation {
+        return ResourceLocation.fromNamespaceAndPath("jei", path)
+    }
 }
