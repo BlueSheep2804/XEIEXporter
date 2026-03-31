@@ -1,10 +1,9 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.recipe.IRecipeExporter
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
+import dev.bluesheep.xeiexporter.api.recipe.RecipeSlot
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
-import dev.bluesheep.xeiexporter.api.recipe.result.ItemRecipeResult
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlJei
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
@@ -15,7 +14,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole
 import mezz.jei.api.recipe.RecipeType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.*
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.jvm.optionals.getOrElse
@@ -70,11 +68,15 @@ class RecipeExporter {
                 return@map RecipeData(
                     recipeId,
                     recipeTypeId,
-                    slotsView.getSlotViews(RecipeIngredientRole.INPUT).map {
-                        ItemRecipeIngredient(it.itemStacks.toList())
+                    slotsView.getSlotViews(RecipeIngredientRole.INPUT).map { slot ->
+                        RecipeSlot(slot.allIngredients.map {
+                            RecipeIngredient.getIngredient(it)
+                        }.toList())
                     },
-                    slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map {
-                        ItemRecipeResult(if (it.itemStacks.findAny().isPresent) it.itemStacks.toList().first() else ItemStack.EMPTY)
+                    slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map { slot ->
+                        RecipeSlot(slot.allIngredients.map {
+                            RecipeIngredient.getIngredient(it)
+                        }.toList())
                     }
                 )
             }
@@ -90,7 +92,7 @@ class RecipeExporter {
             val slot = recipeTypeSlots[recipeType.uid]!!
             recipeTypes.add(RecipeTypeData(
                 recipeType.uid,
-                ItemRecipeIngredient(catalyst),
+                RecipeSlot(catalyst.map { ItemRecipeIngredient(it) }),
                 slot.first,
                 slot.second
             ))
@@ -104,7 +106,7 @@ class RecipeExporter {
                 this[RecipesTable.namespace] = it.id.namespace
                 this[RecipesTable.path] = it.id.path
                 this[RecipesTable.type] = it.type.toString()
-                this[RecipesTable.input] = it.input.map { input -> input.export().joinToString(",") }
+                this[RecipesTable.input] = it.input.map { input -> input.export() }
                 this[RecipesTable.output] = it.output.map { output -> output.export() }
             }
 
@@ -112,7 +114,7 @@ class RecipeExporter {
 
             RecipeTypeTable.batchInsert(recipeTypes) {
                 this[RecipeTypeTable.id] = it.id.toString()
-                this[RecipeTypeTable.catalyst] = it.catalyst.export()
+                this[RecipeTypeTable.catalyst] = it.catalyst.exportList()
                 this[RecipeTypeTable.inputSize] = it.inputSize
                 this[RecipeTypeTable.outputSize] = it.outputSize
             }
@@ -121,12 +123,12 @@ class RecipeExporter {
 
     private data class RecipeTypeData(
         val id: ResourceLocation,
-        val catalyst: ItemRecipeIngredient,
+        val catalyst: RecipeSlot,
         val inputSize: Int,
         val outputSize: Int
     ) {
         companion object {
-            val EMPTY = RecipeTypeData(rlVanilla("empty"), ItemRecipeIngredient(ItemStack.EMPTY), 0, 0)
+            val EMPTY = RecipeTypeData(rlVanilla("empty"), RecipeSlot(emptyList()), 0, 0)
         }
     }
 }

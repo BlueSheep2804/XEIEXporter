@@ -1,25 +1,11 @@
 package dev.bluesheep.xeiexporter.api.recipe.ingredient
 
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Ingredient
 import net.minecraftforge.registries.ForgeRegistries
 
-class ItemRecipeIngredient(val ingredient: Ingredient) : AbstractRecipeIngredient<ItemStack>(ingredient.items.asList()) {
-    constructor(ingredient: ItemStack) : this(listOf(ingredient))
-
-    constructor(ingredients: List<ItemStack>) : this(Ingredient.of(*ingredients.toTypedArray()))
-
-    override fun export(): List<String> {
-        val values = ingredient.values.asList()
-        return values.map {
-            if (it is Ingredient.TagValue) {
-                "#" + it.serialize().get("tag").asString
-            } else {
-                it.items.joinToString(",") { itemStack ->
-                    val count = if (itemStack.count > 1) "${itemStack.count}x " else ""
-                    "${count}${ForgeRegistries.ITEMS.getKey(itemStack.item)}"
-                }
-            }
-        }
+class ItemRecipeIngredient(ingredient: ItemStack) : AbstractRecipeIngredient<ItemStack>(ingredient) {
+    override fun export(): String {
+        val count = if (ingredient.count > 1) "${ingredient.count}x " else ""
+        return "${count}${ForgeRegistries.ITEMS.getKey(ingredient.item)}"
     }
 }
