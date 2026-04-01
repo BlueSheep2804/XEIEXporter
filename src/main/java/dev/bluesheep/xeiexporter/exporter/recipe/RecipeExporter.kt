@@ -1,6 +1,7 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.api.recipe.IRecipeSlot
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
 import dev.bluesheep.xeiexporter.api.recipe.RecipeSlot
 import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
@@ -69,14 +70,10 @@ class RecipeExporter {
                     recipeId,
                     recipeTypeId,
                     slotsView.getSlotViews(RecipeIngredientRole.INPUT).map { slot ->
-                        RecipeSlot(slot.allIngredients.map {
-                            RecipeIngredient.getIngredient(it)
-                        }.toList())
+                        IRecipeSlot.createFrom(slot.allIngredients.toList())
                     },
                     slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map { slot ->
-                        RecipeSlot(slot.allIngredients.map {
-                            RecipeIngredient.getIngredient(it)
-                        }.toList())
+                        RecipeSlot.fromTypedIngredients(slot.allIngredients.toList())
                     }
                 )
             }
@@ -126,9 +123,5 @@ class RecipeExporter {
         val catalyst: RecipeSlot,
         val inputSize: Int,
         val outputSize: Int
-    ) {
-        companion object {
-            val EMPTY = RecipeTypeData(rlVanilla("empty"), RecipeSlot(emptyList()), 0, 0)
-        }
-    }
+    )
 }
