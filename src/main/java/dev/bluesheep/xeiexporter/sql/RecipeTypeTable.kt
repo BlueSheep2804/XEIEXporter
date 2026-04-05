@@ -7,6 +7,8 @@ object RecipeTypeTable : Table("recipe_type") {
     val catalyst = array<String>("catalyst")
     val inputSize = integer("inputSize")
     val outputSize = integer("outputSize")
+    val titleKey = text("titleKey")
+    val titleFallback = text("titleFallback")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

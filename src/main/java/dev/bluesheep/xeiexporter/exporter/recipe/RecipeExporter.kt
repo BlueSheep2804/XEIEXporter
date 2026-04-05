@@ -13,6 +13,7 @@ import dev.bluesheep.xeiexporter.sql.RecipeTypeTable
 import dev.bluesheep.xeiexporter.sql.RecipesTable
 import mezz.jei.api.recipe.RecipeIngredientRole
 import mezz.jei.api.recipe.RecipeType
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.jetbrains.exposed.v1.jdbc.batchInsert
@@ -85,13 +86,23 @@ class RecipeExporter {
             if (blackList.contains(recipeType.uid)) return@forEach
             val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()
                 .map { it.itemStack.getOrElse { ItemStack.EMPTY } }.toList()
+            val title = runtime.recipeManager.getRecipeCategory(recipeType).title
+            val titleComponent = title.contents
+            val titleKey = if (titleComponent is TranslatableContents) {
+                titleComponent.key
+            } else ""
+            val titleFallback = if (titleComponent is TranslatableContents) {
+                titleComponent.fallback ?: ""
+            } else title.string
 
             val slot = recipeTypeSlots[recipeType.uid]!!
             recipeTypes.add(RecipeTypeData(
                 recipeType.uid,
                 RecipeSlot(catalyst.map { ItemRecipeIngredient(it) }),
                 slot.first,
-                slot.second
+                slot.second,
+                titleKey,
+                titleFallback
             ))
         }
 
@@ -114,6 +125,8 @@ class RecipeExporter {
                 this[RecipeTypeTable.catalyst] = it.catalyst.exportList()
                 this[RecipeTypeTable.inputSize] = it.inputSize
                 this[RecipeTypeTable.outputSize] = it.outputSize
+                this[RecipeTypeTable.titleKey] = it.titleKey
+                this[RecipeTypeTable.titleFallback] = it.titleFallback
             }
         }
     }
@@ -122,6 +135,8 @@ class RecipeExporter {
         val id: ResourceLocation,
         val catalyst: RecipeSlot,
         val inputSize: Int,
-        val outputSize: Int
+        val outputSize: Int,
+        val titleKey: String,
+        val titleFallback: String
     )
 }
