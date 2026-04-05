@@ -1,40 +1,28 @@
 package dev.bluesheep.xeiexporter.exporter.resources
 
-import com.mojang.blaze3d.platform.NativeImage
-import net.minecraft.client.Minecraft
+import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.XEIExporter
+import mezz.jei.common.platform.IPlatformFluidHelperInternal
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
-import java.io.IOException
 
-class FluidRenderer : IRenderer {
+class FluidRenderer : AbstractRenderSystemRenderer() {
     override val name: String = "fluids"
-    override val entries: Map<ResourceLocation, NativeImage>
-        get() = mapOf(*ForgeRegistries.FLUIDS.entries
-            .map { (key, value) ->
-                // TintColorを適用させる
-                val fluidExtension = IClientFluidTypeExtensions.of(value)
-                val textureLocation = fluidExtension.stillTexture
-                    ?.withPrefix("textures/")
-                    ?.withSuffix(".png")
 
-                val baseTexture = try {
-                    if (textureLocation != null) {
-                        val texture = Minecraft.getInstance().resourceManager.open(textureLocation)
-                        NativeImage.read(texture)
-                    } else null
-                } catch (e: IOException) {
-                    null
+    override val renderList: Map<ResourceLocation, (GuiGraphics) -> Unit>
+        get() {
+            val fluidHelper = JEIExporterPlugin.runtime?.jeiHelpers?.platformFluidHelper ?: return emptyMap()
+            return ForgeRegistries.FLUIDS.entries.associate { (key, fluid) ->
+                key.location() to { guiGraphics ->
+                    try {
+                        (fluidHelper as IPlatformFluidHelperInternal<FluidStack>).createRenderer(1000, false, 64, 64)
+                            .render(guiGraphics, FluidStack(fluid, 1000), 0, 0)
+                    } catch (_: ClassCastException) {
+                        XEIExporter.LOGGER.error("ClassCastException by ${key.location()} on FluidRenderer")
+                    }
                 }
-                val texture = NativeImage(16, 16, true)
-                baseTexture?.copyRect(
-                    texture,
-                    0, 0,
-                    0, 0,
-                    16, 16,
-                    false, false
-                )
-                baseTexture?.close()
-                return@map key.location() to texture
-            }.toTypedArray())
+            }
+        }
 }
