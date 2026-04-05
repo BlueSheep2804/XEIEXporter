@@ -12,6 +12,7 @@ class RenderExporter {
     init {
         renderers.add(ItemRenderer())
         renderers.add(FluidRenderer())
+        renderers.add(RecipeCategoryRenderer())
     }
 
     fun export() {
@@ -22,12 +23,12 @@ class RenderExporter {
         }
     }
 
-    private fun exportImage(parent: String, itemId: ResourceLocation, nativeImage: NativeImage) {
+    private fun exportImage(parent: String, entryId: ResourceLocation, nativeImage: NativeImage) {
         try {
             nativeImage.writeToFile(
                 resourceLocationToPath(
                     XEIExporter.EXPORT_ASSETS_DIR.resolve(parent),
-                    itemId,
+                    entryId,
                     ".png"
                 )
             )

@@ -72,7 +72,7 @@ object ExportUtil {
         if (pathArray.size == 1) {
             path = path.resolve(pathArray[0])
         } else {
-            for (i in 0..<pathArray.size - 1) {
+            for (i in 0..<pathArray.size) {
                 path = path.resolve(pathArray[i])
             }
         }
