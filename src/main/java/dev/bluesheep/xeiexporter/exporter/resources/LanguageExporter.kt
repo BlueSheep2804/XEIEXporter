@@ -13,20 +13,29 @@ object LanguageExporter {
 
     fun export() {
         ExportUtil.mkdir(EXPORT_LANG_DIR)
-
         val minecraft = Minecraft.getInstance()
+
+        val fallbackLanguage = Config.EXPORT_LANGUAGE_FALLBACK.get()
+        val isFallbackAvailable = minecraft.languageManager.getLanguage(fallbackLanguage) != null
+        if (!isFallbackAvailable) {
+            minecraft.player?.sendSystemMessage(languageNotFoundComponent(fallbackLanguage))
+        }
+
         val exportedLanguage = mutableListOf<String>()
         Config.EXPORT_LANGUAGES.get().forEach { langName ->
             if (minecraft.languageManager.getLanguage(langName) == null) {
-                minecraft.player?.sendSystemMessage(
-                    Component.literal("⚠Language not found: $langName").withStyle(ChatFormatting.YELLOW)
-                )
+                minecraft.player?.sendSystemMessage(languageNotFoundComponent(langName))
                 return@forEach
             }
 
+            val languageList = if (isFallbackAvailable && fallbackLanguage != langName) {
+                listOf(fallbackLanguage, langName)
+            } else {
+                listOf(langName)
+            }
             val lang = ClientLanguage.loadFrom(
                 minecraft.resourceManager,
-                listOf(langName),
+                languageList,
                 false
             ).languageData.mapValues(::escape).toSortedMap()
 
@@ -43,5 +52,10 @@ object LanguageExporter {
             .replace("}", "\\}")
             .replace("@", "\\@")
             .replace("|", "\\|")
+    }
+
+    private fun languageNotFoundComponent(langName: String): Component {
+        return Component.translatable("xeiexporter.language.not_found", langName)
+            .withStyle(ChatFormatting.YELLOW)
     }
 }

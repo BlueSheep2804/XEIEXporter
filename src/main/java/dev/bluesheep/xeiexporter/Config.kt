@@ -29,5 +29,9 @@ object Config {
         .comment("List of languages to export.")
         .defineList("exportLanguages", listOf("en_us")) { true }
 
+    val EXPORT_LANGUAGE_FALLBACK: ForgeConfigSpec.ConfigValue<String> = BUILDER
+        .comment("Fallback language when exporting language data.")
+        .define("exportLanguageFallback", "en_us")
+
     val SPEC: ForgeConfigSpec = BUILDER.build()
 }
