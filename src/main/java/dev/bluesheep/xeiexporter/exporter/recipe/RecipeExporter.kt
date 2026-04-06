@@ -30,8 +30,8 @@ class RecipeExporter {
         rlVanilla("tag_recipes/item")
     )
 
-    fun exportRecipes() {
-        val runtime = JEIExporterPlugin.runtime ?: return
+    fun exportRecipes(): Int {
+        val runtime = JEIExporterPlugin.runtime ?: return 0
 
         val recipeTypeSlots = mutableMapOf<ResourceLocation, Pair<Int, Int>>()
         // 登録されているレシピをRecipeDataとして出力
@@ -129,6 +129,8 @@ class RecipeExporter {
                 this[RecipeTypeTable.titleFallback] = it.titleFallback
             }
         }
+
+        return recipes.size
     }
 
     private data class RecipeTypeData(

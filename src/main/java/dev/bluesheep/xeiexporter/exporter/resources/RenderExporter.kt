@@ -2,6 +2,7 @@ package dev.bluesheep.xeiexporter.exporter.resources
 
 import com.mojang.blaze3d.platform.NativeImage
 import dev.bluesheep.xeiexporter.XEIExporter
+import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
 import net.minecraft.resources.ResourceLocation
 import java.io.IOException
@@ -17,9 +18,16 @@ class RenderExporter {
 
     fun export() {
         renderers.forEach { renderer ->
+            var count = 0
             renderer.entries.forEach { (location, image) ->
                 exportImage(renderer.name, location, image)
+                count++
             }
+            ExportUtil.assetLogComplete(
+                "render",
+                count,
+                renderer.name
+            )
         }
     }
 

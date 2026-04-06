@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component
 object LanguageExporter {
     private val EXPORT_LANG_DIR = EXPORT_ASSETS_DIR.resolve("lang")
 
-    fun export() {
+    fun export(): Int {
         ExportUtil.mkdir(EXPORT_LANG_DIR)
         val minecraft = Minecraft.getInstance()
 
@@ -42,7 +42,9 @@ object LanguageExporter {
             ExportUtil.saveExportFile(lang, EXPORT_LANG_DIR.resolve("$langName.json"))
             exportedLanguage.add(langName)
         }
+
         ExportUtil.saveExportFile(exportedLanguage, EXPORT_LANG_DIR.resolve("available.json"))
+        return exportedLanguage.size
     }
 
     private fun escape(entry: Map.Entry<String, String>): String {

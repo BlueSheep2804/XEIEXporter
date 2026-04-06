@@ -9,7 +9,7 @@ import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull
 
 object ModInfoExporter {
-    fun export() {
+    fun export(): Int {
         val mods = FMLLoader.getLoadingModList().mods.map {
             ModData(
                 it.modId,
@@ -37,6 +37,8 @@ object ModInfoExporter {
                 this[ModsTable.license] = it.license
             }
         }
+
+        return mods.size
     }
 
     private data class ModData(

@@ -48,7 +48,8 @@ object XEIExporter {
     fun register(event: RegisterCommandsEvent) {
         event.dispatcher.register(
             Commands.literal("export").executes { context ->
-                return@executes ExportUtil.export()
+                context.source.player?.let { ExportUtil.exportData(it) }
+                return@executes 0
             }
         )
     }
@@ -59,7 +60,8 @@ object XEIExporter {
         fun registerClientCommand(event: RegisterClientCommandsEvent) {
             event.dispatcher.register(
                 Commands.literal("exportc").executes { context ->
-                    return@executes ExportUtil.exportClient()
+                    ExportUtil.exportAsset()
+                    return@executes 0
                 }
             )
         }
