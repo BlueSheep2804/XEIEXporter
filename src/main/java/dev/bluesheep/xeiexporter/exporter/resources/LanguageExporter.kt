@@ -15,6 +15,7 @@ object LanguageExporter {
         ExportUtil.mkdir(EXPORT_LANG_DIR)
 
         val minecraft = Minecraft.getInstance()
+        val exportedLanguage = mutableListOf<String>()
         Config.EXPORT_LANGUAGES.get().forEach { langName ->
             if (minecraft.languageManager.getLanguage(langName) == null) {
                 minecraft.player?.sendSystemMessage(
@@ -30,7 +31,9 @@ object LanguageExporter {
             ).languageData.mapValues(::escape).toSortedMap()
 
             ExportUtil.saveExportFile(lang, EXPORT_LANG_DIR.resolve("$langName.json"))
+            exportedLanguage.add(langName)
         }
+        ExportUtil.saveExportFile(exportedLanguage, EXPORT_LANG_DIR.resolve("available.json"))
     }
 
     private fun escape(entry: Map.Entry<String, String>): String {
