@@ -21,7 +21,7 @@ object LanguageExporter {
             minecraft.player?.sendSystemMessage(languageNotFoundComponent(fallbackLanguage))
         }
 
-        val exportedLanguage = mutableListOf<String>()
+        val exportedLanguage = mutableMapOf<String, String>()
         Config.EXPORT_LANGUAGES.get().forEach { langName ->
             if (minecraft.languageManager.getLanguage(langName) == null) {
                 minecraft.player?.sendSystemMessage(languageNotFoundComponent(langName))
@@ -40,7 +40,7 @@ object LanguageExporter {
             ).languageData.mapValues(::escape).toSortedMap()
 
             ExportUtil.saveExportFile(lang, EXPORT_LANG_DIR.resolve("$langName.json"))
-            exportedLanguage.add(langName)
+            exportedLanguage.put(langName, "${lang["language.name"]} (${lang["language.region"]})")
         }
 
         ExportUtil.saveExportFile(exportedLanguage, EXPORT_LANG_DIR.resolve("available.json"))
