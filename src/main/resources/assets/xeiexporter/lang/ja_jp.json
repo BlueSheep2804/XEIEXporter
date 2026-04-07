@@ -1,0 +1,20 @@
+{
+  "xeiexporter.database.error": "データベース関係でエラーが発生しました: %s",
+  "xeiexporter.mod.start": "Mod情報をエクスポート中...",
+  "xeiexporter.mod.complete": "✔ %s個のMod情報をエクスポートしました",
+  "xeiexporter.registry.start": "レジストリをエクスポート中...",
+  "xeiexporter.registry.complete": "✔ %1$s個のレジストリ(%2$s)をエクスポートしました",
+  "xeiexporter.tag.start": "タグをエクスポート中...",
+  "xeiexporter.tag.complete": "✔ %1$s個のタグ(%2$s)をエクスポートしました",
+  "xeiexporter.recipe.start": "レシピをエクスポート中...",
+  "xeiexporter.recipe.complete": "✔ %s個のレシピをエクスポートしました",
+  "xeiexporter.render.start": "レンダー画像をエクスポート中...",
+  "xeiexporter.render.complete": "✔ %1$s個のレンダー画像(%2$s)をエクスポートしました",
+  "xeiexporter.language.start": "言語ファイルをエクスポート中...",
+  "xeiexporter.language.complete": "✔ %s個の言語をエクスポートしました",
+  "xeiexporter.language.not_found": "⚠言語が見つかりません: %s",
+  "xeiexporter.complete": "✔ エクスポート完了",
+  "itemGroup.xeiexporter.debug_tab": "XEIEXporter デバッグ",
+  "block.xeiexporter.simple_block": "シンプルブロック",
+  "item.xeiexporter.debug_food": "デバッグ食"
+}
