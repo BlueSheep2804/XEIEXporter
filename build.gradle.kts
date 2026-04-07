@@ -174,6 +174,10 @@ tasks.named<Jar>("jar").configure {
     manifest.attributes(mapOf(
             "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
     ))
+
+    from("LICENSE") {
+        rename { "${it}_${ModInfo.mod_name}" }
+    }
 }
 
 tasks.jarJar {
