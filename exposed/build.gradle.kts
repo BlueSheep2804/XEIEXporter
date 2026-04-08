@@ -126,6 +126,11 @@ tasks.named<ShadowJar>("shadowJar") {
     mergeServiceFiles()
     append("META-INF/LICENSE")
     append("META-INF/NOTICE")
+
+    from("LICENSE_exposed")
+    from("LICENSE") {
+        rename { "${it}_${ModInfo.mod_id}" }
+    }
 }
 
 artifacts {
