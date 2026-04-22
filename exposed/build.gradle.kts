@@ -91,6 +91,9 @@ dependencies {
     "shadow"(implementation("org.jetbrains.exposed:exposed-jdbc:${ModInfo.mod_version}") {
         isTransitive = false
     })
+    "shadow"(implementation("org.jetbrains.exposed:exposed-json:${ModInfo.mod_version}") {
+        isTransitive = false
+    })
 }
 
 var generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {

@@ -6,7 +6,8 @@ plugins {
     id ("java-library")
     id ("maven-publish")
     id ("net.neoforged.moddev.legacyforge") version "2.0.91"
-    id ("org.jetbrains.kotlin.jvm") version "2.2.21"
+    kotlin ("jvm") version "2.2.21"
+    kotlin ("plugin.serialization") version "2.2.21"
 }
 
 tasks.named<Wrapper>("wrapper").configure {
@@ -152,6 +153,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-core:${ModInfo.exposed_version}")
     compileOnly("org.jetbrains.exposed:exposed-dao:${ModInfo.exposed_version}")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:${ModInfo.exposed_version}")
+    compileOnly("org.jetbrains.exposed:exposed-json:${ModInfo.exposed_version}")
 
     jarJar(implementation("org.postgresql:postgresql:42.7.7")!!)
     "additionalRuntimeClasspath"("org.postgresql:postgresql:42.7.7")
