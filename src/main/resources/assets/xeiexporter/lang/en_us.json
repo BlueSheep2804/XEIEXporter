@@ -1,5 +1,6 @@
 {
-  "xeiexporter.database.error": "An error occurred related to the database: %s",
+  "xeiexporter.error": "An unknown error has occurred: %s",
+  "xeiexporter.error.database": "An error occurred related to the database: %s",
   "xeiexporter.mod.start": "Exporting mod information...",
   "xeiexporter.mod.complete": "✔ Exported %s mods",
   "xeiexporter.registry.start": "Exporting registry...",

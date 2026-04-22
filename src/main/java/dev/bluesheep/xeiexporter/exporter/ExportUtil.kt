@@ -54,17 +54,33 @@ object ExportUtil {
                 dataLogStart("recipe")
                 val recipeCount = recipeExporter.exportRecipes()
                 dataLogComplete("recipe", recipeCount)
-            } catch (e: PSQLException) {
-                sendSystemMessage(
-                    Component.translatable("xeiexporter.database.error", e::class.jvmName)
-                        .withStyle(
-                            Style.EMPTY
-                                .withColor(ChatFormatting.RED)
-                                .withHoverEvent(
-                                    HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.message ?: ""))
+            } catch (e: Exception) {
+                when (e) {
+                    is PSQLException -> {
+                        sendSystemMessage(
+                            Component.translatable("xeiexporter.error.database", e::class.jvmName)
+                                .withStyle(
+                                    Style.EMPTY
+                                        .withColor(ChatFormatting.RED)
+                                        .withHoverEvent(
+                                            HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.message ?: ""))
+                                        )
                                 )
                         )
-                )
+                    }
+                    else -> {
+                        sendSystemMessage(
+                            Component.translatable("xeiexporter.error", e::class.jvmName)
+                                .withStyle(
+                                    Style.EMPTY
+                                        .withColor(ChatFormatting.RED)
+                                        .withHoverEvent(
+                                            HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.message ?: ""))
+                                        )
+                                )
+                        )
+                    }
+                }
             }
 
             sendSystemMessage(Component.translatable("xeiexporter.complete").withStyle(ChatFormatting.GREEN))

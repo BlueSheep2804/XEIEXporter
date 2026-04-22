@@ -1,5 +1,6 @@
 {
-  "xeiexporter.database.error": "データベース関係でエラーが発生しました: %s",
+  "xeiexporter.error": "不明なエラーが発生しました: %s",
+  "xeiexporter.error.database": "データベース関係でエラーが発生しました: %s",
   "xeiexporter.mod.start": "Mod情報をエクスポート中...",
   "xeiexporter.mod.complete": "✔ %s個のMod情報をエクスポートしました",
   "xeiexporter.registry.start": "レジストリをエクスポート中...",
