@@ -1,10 +1,8 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.recipe.IRecipeSlot
 import dev.bluesheep.xeiexporter.api.recipe.RecipeData
-import dev.bluesheep.xeiexporter.api.recipe.RecipeSlot
-import dev.bluesheep.xeiexporter.api.recipe.ingredient.ItemRecipeIngredient
+import dev.bluesheep.xeiexporter.api.recipe.RecipeStackData
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlJei
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
@@ -15,10 +13,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole
 import mezz.jei.api.recipe.RecipeType
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.ItemStack
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import kotlin.jvm.optionals.getOrElse
 
 class RecipeExporter {
     private val blackList = listOf(
@@ -65,17 +61,20 @@ class RecipeExporter {
                     recipeTypeSlots.put(recipeTypeId, slotsCount.copy(second = outputSize))
                 }
 
+                val input = slotsView.getSlotViews(RecipeIngredientRole.INPUT).map { slot ->
+                    RecipeSlot.createFrom(slot.allIngredients.toList())
+                }
+                val output = slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map { slot ->
+                    RecipeSlot.fromTypedIngredients(slot.allIngredients.toList())
+                }
+
                 val recipeId = category.getRegistryName(recipe)
                     ?: ExportUtil.rl("${recipeTypeId.toString().replace(':', '_')}/")
                 return@map RecipeData(
                     recipeId,
                     recipeTypeId,
-                    slotsView.getSlotViews(RecipeIngredientRole.INPUT).map { slot ->
-                        IRecipeSlot.createFrom(slot.allIngredients.toList())
-                    },
-                    slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).map { slot ->
-                        RecipeSlot.fromTypedIngredients(slot.allIngredients.toList())
-                    }
+                    input,
+                    output
                 )
             }
         }.toList()
@@ -84,8 +83,9 @@ class RecipeExporter {
         val recipeTypes = mutableListOf<RecipeTypeData>()
         runtime.jeiHelpers.allRecipeTypes.forEach { recipeType ->
             if (blackList.contains(recipeType.uid)) return@forEach
-            val catalyst = runtime.recipeManager.createRecipeCatalystLookup(recipeType).get()
-                .map { it.itemStack.getOrElse { ItemStack.EMPTY } }.toList()
+            val catalyst = RecipeSlot.fromTypedIngredients(
+                runtime.recipeManager.createRecipeCatalystLookup(recipeType).get().toList()
+            )
             val title = runtime.recipeManager.getRecipeCategory(recipeType).title
             val titleComponent = title.contents
             val titleKey = if (titleComponent is TranslatableContents) {
@@ -98,7 +98,7 @@ class RecipeExporter {
             val slot = recipeTypeSlots[recipeType.uid]!!
             recipeTypes.add(RecipeTypeData(
                 recipeType.uid,
-                RecipeSlot(catalyst.map { ItemRecipeIngredient(it) }),
+                catalyst,
                 slot.first,
                 slot.second,
                 titleKey,
@@ -114,15 +114,15 @@ class RecipeExporter {
                 this[RecipesTable.namespace] = it.id.namespace
                 this[RecipesTable.path] = it.id.path
                 this[RecipesTable.type] = it.type.toString()
-                this[RecipesTable.input] = it.input.map { input -> input.export() }
-                this[RecipesTable.output] = it.output.map { output -> output.export() }
+                this[RecipesTable.input] = it.input
+                this[RecipesTable.output] = it.output
             }
 
             DatabaseUtil.reset(RecipeTypeTable)
 
             RecipeTypeTable.batchInsert(recipeTypes) {
                 this[RecipeTypeTable.id] = it.id.toString()
-                this[RecipeTypeTable.catalyst] = it.catalyst.exportList()
+                this[RecipeTypeTable.catalyst] = it.catalyst
                 this[RecipeTypeTable.inputSize] = it.inputSize
                 this[RecipeTypeTable.outputSize] = it.outputSize
                 this[RecipeTypeTable.titleKey] = it.titleKey
@@ -135,7 +135,7 @@ class RecipeExporter {
 
     private data class RecipeTypeData(
         val id: ResourceLocation,
-        val catalyst: RecipeSlot,
+        val catalyst: List<RecipeStackData>,
         val inputSize: Int,
         val outputSize: Int,
         val titleKey: String,

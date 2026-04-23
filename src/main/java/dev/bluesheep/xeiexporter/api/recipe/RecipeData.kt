@@ -5,6 +5,6 @@ import net.minecraft.resources.ResourceLocation
 data class RecipeData(
     val id: ResourceLocation,
     val type: ResourceLocation,
-    val input: List<IRecipeSlot>,
-    val output: List<IRecipeSlot>
+    val input: List<List<RecipeStackData>>,
+    val output: List<List<RecipeStackData>>
 )

@@ -7,7 +7,10 @@ abstract class AbstractRecipeIngredient<T>(val ingredient: T) {
     companion object {
         val UNKNOWN_ENTRY = ExportUtil.rl("unknown")
     }
-    abstract val entryType: String
+    abstract val entryType: ResourceLocation
+    abstract val entry: ResourceLocation
+    abstract val amount: Int
+    abstract val chance: Float
     abstract fun export(): String
 
     protected fun format(entryLocation: ResourceLocation?, count: Int = 1, hideSingularAmount: Boolean = true): String {
