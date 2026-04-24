@@ -165,6 +165,9 @@ dependencies {
     "modLocalRuntime"("maven.modrinth:create:mc1.20.1-6.0.8")
     "modLocalRuntime"("maven.modrinth:ae2:7KVs6HMQ")
     "modLocalRuntime"("maven.modrinth:guideme:20.1.14")
+    "modLocalRuntime"("maven.modrinth:mekanism:10.4.16.80")
+    "modLocalRuntime"("maven.modrinth:tinkers-construct:3.11.2.166")
+    "modLocalRuntime"("maven.modrinth:mantle:1.11.104")
 }
 
 mixin {
