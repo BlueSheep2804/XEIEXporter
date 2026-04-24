@@ -1,6 +1,7 @@
 package dev.bluesheep.xeiexporter.exporter.resources
 
 import com.mojang.blaze3d.platform.NativeImage
+import dev.bluesheep.xeiexporter.JEIExporterPlugin
 import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
@@ -11,9 +12,19 @@ class RenderExporter {
     private val renderers = mutableListOf<IRenderer>()
 
     init {
-        renderers.add(ItemRenderer())
-        renderers.add(FluidRenderer())
         renderers.add(RecipeCategoryRenderer())
+
+        val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
+        ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->
+            renderers.add(
+                JEIIngredientRenderer(
+                    ingredientType.uid,
+                    ingredientManager.getAllIngredients(ingredientType).toList(),
+                    ingredientManager.getIngredientHelper<Any>(ingredientType),
+                    ingredientManager.getIngredientRenderer<Any>(ingredientType)
+                )
+            )
+        }
     }
 
     fun export() {
