@@ -1,0 +1,62 @@
+package dev.bluesheep.xeiexporter.exporter.ingredient
+
+import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.exporter.ExportUtil
+import dev.bluesheep.xeiexporter.sql.DatabaseUtil
+import dev.bluesheep.xeiexporter.sql.IngredientTable
+import mezz.jei.api.ingredients.IIngredientType
+import mezz.jei.api.ingredients.subtypes.UidContext
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.HoverEvent
+import net.minecraft.network.chat.Style
+import org.jetbrains.exposed.v1.jdbc.batchInsert
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+
+object IngredientExporter {
+    fun export() {
+        val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
+
+        transaction {
+            DatabaseUtil.reset(IngredientTable)
+
+            ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->
+                val helper = ingredientManager.getIngredientHelper(ingredientType as IIngredientType<Any>)
+
+                val allIngredients = ingredientManager.getAllIngredients(ingredientType)
+                if (allIngredients.isEmpty()) {
+                    ExportUtil.dataLogWarning("ingredient.none", hoverIngredientTypeUid(ingredientType.uid))
+                } else {
+                    val ingredients = allIngredients.map { ingredient ->
+                        IngredientData(
+                            ingredientType.uid,
+                            helper.getResourceLocation(ingredient),
+                            helper.getUniqueId(ingredient, UidContext.Ingredient),
+                            helper.getDisplayName(ingredient)
+                        )
+                    }
+
+                    IngredientTable.batchInsert(ingredients) { ingredient ->
+                        this[IngredientTable.type] = ingredient.type
+                        this[IngredientTable.namespace] = ingredient.namespace
+                        this[IngredientTable.path] = ingredient.path
+                        this[IngredientTable.uniqueId] = ingredient.uniqueId
+                        this[IngredientTable.descriptionId] = ingredient.descriptionId
+                    }
+                    ExportUtil.dataLogComplete("ingredient", ingredients.size, hoverIngredientTypeUid(ingredientType.uid))
+                }
+            }
+        }
+    }
+
+    private fun hoverIngredientTypeUid(uid: String): Component {
+        return if (uid.contains('.')) {
+            val shortUid = uid.split('.').last()
+            Component.literal(shortUid)
+                .withStyle(Style.EMPTY.withHoverEvent(
+                    HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(uid))
+                ))
+        } else {
+            Component.literal(uid)
+        }
+    }
+}
