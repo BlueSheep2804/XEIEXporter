@@ -177,6 +177,7 @@ tasks.named<Jar>("jar").configure {
 //            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
 //    ))
 
+    from("LICENSE_pgjdbc")
     from("LICENSE") {
         rename { "${it}_${ModInfo.mod_name}" }
     }
