@@ -145,7 +145,7 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+//    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 
     implementation("thedarkcolour:kotlinforforge:4.12.0")
 
@@ -167,15 +167,15 @@ dependencies {
     "modLocalRuntime"("maven.modrinth:guideme:20.1.14")
 }
 
-mixin {
-    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
-    config("${ModInfo.mod_id}.mixins.json")
-}
+//mixin {
+//    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
+//    config("${ModInfo.mod_id}.mixins.json")
+//}
 
 tasks.named<Jar>("jar").configure {
-    manifest.attributes(mapOf(
-            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
-    ))
+//    manifest.attributes(mapOf(
+//            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
+//    ))
 
     from("LICENSE") {
         rename { "${it}_${ModInfo.mod_name}" }
