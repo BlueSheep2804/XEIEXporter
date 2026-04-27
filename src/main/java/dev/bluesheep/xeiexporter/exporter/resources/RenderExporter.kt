@@ -5,6 +5,7 @@ import dev.bluesheep.xeiexporter.JEIExporterPlugin
 import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
+import mezz.jei.api.ingredients.IIngredientType
 import net.minecraft.resources.ResourceLocation
 import java.io.IOException
 
@@ -20,8 +21,8 @@ class RenderExporter {
                 JEIIngredientRenderer(
                     ingredientType.uid,
                     ingredientManager.getAllIngredients(ingredientType).toList(),
-                    ingredientManager.getIngredientHelper<Any>(ingredientType),
-                    ingredientManager.getIngredientRenderer<Any>(ingredientType)
+                    ingredientManager.getIngredientHelper(ingredientType as IIngredientType<Any>),
+                    ingredientManager.getIngredientRenderer(ingredientType)
                 )
             )
         }
