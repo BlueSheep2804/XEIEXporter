@@ -1,7 +1,9 @@
 package dev.bluesheep.xeiexporter.exporter.ingredient
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.api.IIngredientModifier
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
+import dev.bluesheep.xeiexporter.exporter.ingredient.DefaultModifier
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import dev.bluesheep.xeiexporter.sql.IngredientTable
 import mezz.jei.api.ingredients.IIngredientType
@@ -13,6 +15,9 @@ import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object IngredientExporter {
+    val ingredientModifiers = mutableMapOf<Class<*>, IIngredientModifier<*>>()
+    private val defaultModifier = DefaultModifier()
+
     fun export() {
         val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
 
@@ -22,7 +27,12 @@ object IngredientExporter {
             ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->
                 val helper = ingredientManager.getIngredientHelper(ingredientType as IIngredientType<Any>)
 
-                val allIngredients = ingredientManager.getAllIngredients(ingredientType)
+                val modifier = ingredientModifiers[ingredientType.ingredientClass] as IIngredientModifier<Any>?
+
+                val allIngredients = listOf(
+                    *(modifier?.allIngredients ?: ingredientManager.getAllIngredients(ingredientType)).toTypedArray(),
+                    *(modifier ?: defaultModifier).additionalIngredients.toTypedArray()
+                )
                 if (allIngredients.isEmpty()) {
                     ExportUtil.dataLogWarning("ingredient.none", hoverIngredientTypeUid(ingredientType.uid))
                 } else {
@@ -31,7 +41,7 @@ object IngredientExporter {
                             ingredientType.uid,
                             helper.getResourceLocation(ingredient),
                             helper.getUniqueId(ingredient, UidContext.Ingredient),
-                            helper.getDisplayName(ingredient)
+                            modifier?.mapDescriptionId(ingredient) ?: defaultModifier.mapDescriptionId(ingredient)
                         )
                     }
 
