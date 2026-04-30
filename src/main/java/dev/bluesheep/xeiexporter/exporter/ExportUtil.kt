@@ -26,9 +26,10 @@ import java.util.concurrent.CompletableFuture
 import kotlin.reflect.jvm.jvmName
 
 object ExportUtil {
+    val UNKNOWN = rl("unknown")
+
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val recipeExporter = RecipeExporter()
-    private val tagExporter = TagExporter()
     private val renderExporter = Lazy.of { RenderExporter() }
 
     private var serverPlayer: ServerPlayer? = null
@@ -47,8 +48,7 @@ object ExportUtil {
                 IngredientExporter.export()
 
                 dataLogStart("tag")
-                tagExporter.export()
-                dataLogComplete("tag", 0, "")  // TODO: タグをアドオン式にしたときに修正
+                TagExporter.export()
 
                 dataLogStart("recipe")
                 val recipeCount = recipeExporter.exportRecipes()
@@ -174,6 +174,19 @@ object ExportUtil {
     @JvmStatic
     fun rlJei(path: String): ResourceLocation {
         return ResourceLocation.fromNamespaceAndPath("jei", path)
+    }
+
+    @JvmStatic
+    fun hoverIngredientTypeUid(uid: String): Component {
+        return if (uid.contains('.')) {
+            val shortUid = uid.split('.').last()
+            Component.literal(shortUid)
+                .withStyle(Style.EMPTY.withHoverEvent(
+                    HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(uid))
+                ))
+        } else {
+            Component.literal(uid)
+        }
     }
 
     private fun logStart(send: (Component) -> Unit, key: String) {

@@ -2,8 +2,10 @@ package dev.bluesheep.xeiexporter
 
 import com.mojang.logging.LogUtils
 import dev.bluesheep.xeiexporter.api.event.RegisterIngredientModifierEvent
+import dev.bluesheep.xeiexporter.api.event.RegisterTagEvent
 import dev.bluesheep.xeiexporter.debug.DebugRegister
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
+import dev.bluesheep.xeiexporter.exporter.TagExporter
 import dev.bluesheep.xeiexporter.exporter.ingredient.IngredientExporter
 import net.minecraft.commands.Commands
 import net.minecraftforge.api.distmarker.Dist
@@ -50,11 +52,12 @@ object XEIExporter {
     }
 
     fun commonRegister(event: FMLCommonSetupEvent) {
-        val registerIngredientModifierEvent = RegisterIngredientModifierEvent(
-            IngredientExporter.ingredientModifiers
-        )
+        val modEventBus = MOD_CONTEXT.getKEventBus()
+        val registerIngredientModifierEvent = RegisterIngredientModifierEvent(IngredientExporter.ingredientModifiers)
+        modEventBus.post(registerIngredientModifierEvent)
 
-        MOD_CONTEXT.getKEventBus().post(registerIngredientModifierEvent)
+        val registerTagEvent = RegisterTagEvent(TagExporter.tagRegistries)
+        modEventBus.post(registerTagEvent)
     }
 
     @SubscribeEvent

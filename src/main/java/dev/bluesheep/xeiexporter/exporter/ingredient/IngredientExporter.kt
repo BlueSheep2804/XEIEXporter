@@ -34,7 +34,7 @@ object IngredientExporter {
                     *(modifier ?: defaultModifier).additionalIngredients.toTypedArray()
                 )
                 if (allIngredients.isEmpty()) {
-                    ExportUtil.dataLogWarning("ingredient.none", hoverIngredientTypeUid(ingredientType.uid))
+                    ExportUtil.dataLogWarning("ingredient.none", ExportUtil.hoverIngredientTypeUid(ingredientType.uid))
                 } else {
                     val ingredients = allIngredients.map { ingredient ->
                         IngredientData(
@@ -52,21 +52,9 @@ object IngredientExporter {
                         this[IngredientTable.uniqueId] = ingredient.uniqueId
                         this[IngredientTable.descriptionId] = ingredient.descriptionId
                     }
-                    ExportUtil.dataLogComplete("ingredient", ingredients.size, hoverIngredientTypeUid(ingredientType.uid))
+                    ExportUtil.dataLogComplete("ingredient", ingredients.size, ExportUtil.hoverIngredientTypeUid(ingredientType.uid))
                 }
             }
-        }
-    }
-
-    private fun hoverIngredientTypeUid(uid: String): Component {
-        return if (uid.contains('.')) {
-            val shortUid = uid.split('.').last()
-            Component.literal(shortUid)
-                .withStyle(Style.EMPTY.withHoverEvent(
-                    HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(uid))
-                ))
-        } else {
-            Component.literal(uid)
         }
     }
 }
