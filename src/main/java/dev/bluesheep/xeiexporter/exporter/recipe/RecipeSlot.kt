@@ -1,7 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.recipe.RecipeStackData
 import mezz.jei.api.ingredients.ITypedIngredient
 import java.util.Optional
 

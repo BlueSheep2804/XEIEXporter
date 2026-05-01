@@ -1,8 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.recipe.RecipeData
-import dev.bluesheep.xeiexporter.api.recipe.RecipeStackData
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlJei
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
