@@ -1,7 +1,7 @@
 package dev.bluesheep.xeiexporter.compat.minecraft
 
 import dev.bluesheep.xeiexporter.XEIExporter
-import dev.bluesheep.xeiexporter.api.event.RegisterIngredientModifierEvent
+import dev.bluesheep.xeiexporter.api.event.RegisterIngredientExtraHelperEvent
 import dev.bluesheep.xeiexporter.api.event.RegisterTagEvent
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import mezz.jei.api.constants.VanillaTypes
@@ -14,9 +14,9 @@ import net.minecraftforge.registries.ForgeRegistries
 @EventBusSubscriber(modid = XEIExporter.MODID, bus = Bus.MOD)
 object EventHandler {
     @SubscribeEvent
-    fun registerIngredientModifier(event: RegisterIngredientModifierEvent) {
-        event.register(VanillaTypes.ITEM_STACK, ItemIngredientModifier())
-        event.register(ForgeTypes.FLUID_STACK, FluidIngredientModifier())
+    fun registerIngredientExtraHelper(event: RegisterIngredientExtraHelperEvent) {
+        event.register(VanillaTypes.ITEM_STACK, ItemIngredientExtraHelper())
+        event.register(ForgeTypes.FLUID_STACK, FluidIngredientExtraHelper())
     }
 
     @SubscribeEvent

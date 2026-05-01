@@ -1,8 +1,10 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.api.IIngredientExtraHelper
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeStackData
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
+import dev.bluesheep.xeiexporter.exporter.ingredient.IngredientExporter
 import kotlinx.serialization.Serializable
 import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.ingredients.ITypedIngredient
@@ -11,7 +13,7 @@ import mezz.jei.api.ingredients.ITypedIngredient
 data class RecipeStackData(
     override val type: String,
     override val entry: String,
-    override val amount: Int = 1,
+    override val amount: Long = 1,
     override val chance: Float = 1f
 ): IRecipeStackData {
     companion object {
@@ -25,11 +27,12 @@ data class RecipeStackData(
             val ingredient = typedIngredient.getIngredient(typedIngredient.type as IIngredientType<in Any>)
             if (ingredient.isEmpty) return EMPTY
             val helper = ingredientManager.getIngredientHelper(typedIngredient.ingredient)
-            val amount = helper.getAmount(ingredient.get()).toInt()
+            val extraHelper = IngredientExporter.extraHelpers[typedIngredient.type.ingredientClass] as IIngredientExtraHelper<Any>?
+            val amount = extraHelper?.getAmount(ingredient.get()) ?: helper.getAmount(ingredient.get())
             return RecipeStackData(
                 helper.ingredientType.uid,
                 helper.getResourceLocation(ingredient.get()).toString(),
-                if (amount == -1) 1 else amount
+                if (amount == -1L) 1 else amount
             )
         }
     }

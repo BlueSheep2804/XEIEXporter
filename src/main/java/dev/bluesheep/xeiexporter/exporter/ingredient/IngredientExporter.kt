@@ -1,22 +1,18 @@
 package dev.bluesheep.xeiexporter.exporter.ingredient
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.IIngredientModifier
+import dev.bluesheep.xeiexporter.api.IIngredientExtraHelper
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
-import dev.bluesheep.xeiexporter.exporter.ingredient.DefaultModifier
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import dev.bluesheep.xeiexporter.sql.IngredientTable
 import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.ingredients.subtypes.UidContext
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.HoverEvent
-import net.minecraft.network.chat.Style
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object IngredientExporter {
-    val ingredientModifiers = mutableMapOf<Class<*>, IIngredientModifier<*>>()
-    private val defaultModifier = DefaultModifier()
+    val extraHelpers = mutableMapOf<Class<*>, IIngredientExtraHelper<*>>()
+    private val defaultExtraHelper = DefaultExtraHelper()
 
     fun export() {
         val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
@@ -27,11 +23,11 @@ object IngredientExporter {
             ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->
                 val helper = ingredientManager.getIngredientHelper(ingredientType as IIngredientType<Any>)
 
-                val modifier = ingredientModifiers[ingredientType.ingredientClass] as IIngredientModifier<Any>?
+                val extraHelper = extraHelpers[ingredientType.ingredientClass] as IIngredientExtraHelper<Any>?
 
                 val allIngredients = listOf(
-                    *(modifier?.allIngredients ?: ingredientManager.getAllIngredients(ingredientType)).toTypedArray(),
-                    *(modifier ?: defaultModifier).additionalIngredients.toTypedArray()
+                    *(extraHelper?.allIngredients ?: ingredientManager.getAllIngredients(ingredientType)).toTypedArray(),
+                    *(extraHelper ?: defaultExtraHelper).additionalIngredients.toTypedArray()
                 )
                 if (allIngredients.isEmpty()) {
                     ExportUtil.dataLogWarning("ingredient.none", ExportUtil.hoverIngredientTypeUid(ingredientType.uid))
@@ -41,7 +37,7 @@ object IngredientExporter {
                             ingredientType.uid,
                             helper.getResourceLocation(ingredient),
                             helper.getUniqueId(ingredient, UidContext.Ingredient),
-                            modifier?.mapDescriptionId(ingredient) ?: defaultModifier.mapDescriptionId(ingredient)
+                            extraHelper?.getDescriptionId(ingredient) ?: defaultExtraHelper.getDescriptionId(ingredient)
                         )
                     }
 

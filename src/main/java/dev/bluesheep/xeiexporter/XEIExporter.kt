@@ -1,7 +1,7 @@
 package dev.bluesheep.xeiexporter
 
 import com.mojang.logging.LogUtils
-import dev.bluesheep.xeiexporter.api.event.RegisterIngredientModifierEvent
+import dev.bluesheep.xeiexporter.api.event.RegisterIngredientExtraHelperEvent
 import dev.bluesheep.xeiexporter.api.event.RegisterTagEvent
 import dev.bluesheep.xeiexporter.debug.DebugRegister
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
@@ -53,8 +53,8 @@ object XEIExporter {
 
     fun commonRegister(event: FMLCommonSetupEvent) {
         val modEventBus = MOD_CONTEXT.getKEventBus()
-        val registerIngredientModifierEvent = RegisterIngredientModifierEvent(IngredientExporter.ingredientModifiers)
-        modEventBus.post(registerIngredientModifierEvent)
+        val registerIngredientExtraHelperEvent = RegisterIngredientExtraHelperEvent(IngredientExporter.extraHelpers)
+        modEventBus.post(registerIngredientExtraHelperEvent)
 
         val registerTagEvent = RegisterTagEvent(TagExporter.tagRegistries)
         modEventBus.post(registerTagEvent)

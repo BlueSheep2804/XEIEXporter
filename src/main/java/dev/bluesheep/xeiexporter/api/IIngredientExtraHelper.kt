@@ -1,11 +1,13 @@
 package dev.bluesheep.xeiexporter.api
 
-interface IIngredientModifier<T> {
+interface IIngredientExtraHelper<T> {
     val allIngredients: Collection<T>?
         get() = null
 
     val additionalIngredients: Collection<T>
         get() = emptyList()
 
-    fun mapDescriptionId(ingredient: T): String? { return null }
+    fun getDescriptionId(ingredient: T): String? { return null }
+
+    fun getAmount(ingredient: T): Long? { return null }
 }
