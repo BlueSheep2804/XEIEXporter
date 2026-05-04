@@ -16,6 +16,10 @@
   "xeiexporter.language.complete": "✔ %s個の言語をエクスポートしました",
   "xeiexporter.language.not_found": "⚠言語が見つかりません: %s",
   "xeiexporter.complete": "✔ エクスポート完了",
+
+  "ingredient.minecraft.item_stack": "アイテム",
+  "ingredient.minecraft.fluid_stack": "液体",
+
   "itemGroup.xeiexporter.debug_tab": "XEIEXporter デバッグ",
   "block.xeiexporter.simple_block": "シンプルブロック",
   "item.xeiexporter.debug_food": "デバッグ食"

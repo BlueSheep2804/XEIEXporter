@@ -5,6 +5,7 @@ import dev.bluesheep.xeiexporter.api.IIngredientExtraHelper
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.sql.DatabaseUtil
 import dev.bluesheep.xeiexporter.sql.IngredientTable
+import dev.bluesheep.xeiexporter.sql.IngredientTypeTable
 import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.ingredients.subtypes.UidContext
 import org.jetbrains.exposed.v1.jdbc.batchInsert
@@ -18,6 +19,17 @@ object IngredientExporter {
         val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
 
         transaction {
+            DatabaseUtil.reset(IngredientTypeTable)
+
+            val ingredientTypes = ingredientManager?.registeredIngredientTypes?.map { ingredientType ->
+                val extraHelper = extraHelpers[ingredientType.ingredientClass] as IIngredientExtraHelper<Any>?
+                return@map ingredientType.uid to (extraHelper?.ingredientNameKey ?: "")
+            } ?: emptyList()
+            IngredientTypeTable.batchInsert(ingredientTypes) {
+                this[IngredientTypeTable.id] = it.first
+                this[IngredientTypeTable.translationKey] = it.second
+            }
+
             DatabaseUtil.reset(IngredientTable)
 
             ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->

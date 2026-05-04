@@ -16,6 +16,10 @@
   "xeiexporter.language.complete": "✔ Exported %s languages",
   "xeiexporter.language.not_found": "⚠Language not found: %s",
   "xeiexporter.complete": "✔ Export complete.",
+
+  "ingredient.minecraft.item_stack": "Items",
+  "ingredient.minecraft.fluid_stack": "Fluids",
+
   "itemGroup.xeiexporter.debug_tab": "XEIEXporter Debug",
   "block.xeiexporter.simple_block": "Simple Block",
   "item.xeiexporter.debug_food": "Debug Food"
