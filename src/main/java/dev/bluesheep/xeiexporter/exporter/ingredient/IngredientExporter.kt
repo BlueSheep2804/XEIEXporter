@@ -48,7 +48,7 @@ object IngredientExporter {
                         IngredientData(
                             ingredientType.uid,
                             helper.getResourceLocation(ingredient),
-                            helper.getUniqueId(ingredient, UidContext.Ingredient),
+                            if (helper.hasSubtypes(ingredient)) helper.getUniqueId(ingredient, UidContext.Ingredient) else "",
                             extraHelper?.getDescriptionId(ingredient) ?: defaultExtraHelper.getDescriptionId(ingredient)
                         )
                     }
