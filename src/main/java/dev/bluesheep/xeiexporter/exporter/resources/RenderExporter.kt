@@ -28,6 +28,11 @@ class RenderExporter {
     }
 
     fun export() {
+        // 空の画像を出力
+        val emptyImage = NativeImage(64, 64, true)
+        exportImage("item_stack", "minecraft/air", emptyImage)
+        emptyImage.close()
+
         renderers.forEach { renderer ->
             var count = 0
             renderer.entries.forEach { (location, image) ->
