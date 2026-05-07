@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation
 
 object ApiImpl : XEIExporterApi() {
     fun init() {
-        XEIExporterApi.setInstance(this)
+        XEIExporterApi.INSTANCE = this
     }
 
     override fun createRecipeData(

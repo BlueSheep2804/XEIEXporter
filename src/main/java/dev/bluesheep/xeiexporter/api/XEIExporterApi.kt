@@ -7,17 +7,19 @@ import net.minecraft.resources.ResourceLocation
 
 abstract class XEIExporterApi {
     companion object {
-        private lateinit var INSTANCE: XEIExporterApi
+        private lateinit var internalInstance: XEIExporterApi
 
-        internal fun setInstance(instance: XEIExporterApi) {
-            if (!isInitialized) {
-                INSTANCE = instance
+        var INSTANCE: XEIExporterApi
+            get() = internalInstance
+            internal set(value) {
+                if (!isInitialized) {
+                    internalInstance = value
+                }
             }
-        }
 
         @JvmStatic
         val isInitialized
-            get() = this::INSTANCE.isInitialized
+            get() = this::internalInstance.isInitialized
     }
 
     abstract fun createRecipeData(

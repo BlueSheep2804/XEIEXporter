@@ -48,6 +48,7 @@ object XEIExporter {
 
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Config.SPEC)
 
+        ApiImpl.init()
         modEventBus.addListener(this::commonRegister)
     }
 
