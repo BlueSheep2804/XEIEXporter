@@ -3,10 +3,9 @@ package dev.bluesheep.xeiexporter.exporter.resources
 import com.mojang.blaze3d.platform.NativeImage
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
 import dev.bluesheep.xeiexporter.XEIExporter
+import dev.bluesheep.xeiexporter.api.renderer.IRenderer
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
-import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
 import mezz.jei.api.ingredients.IIngredientType
-import net.minecraft.resources.ResourceLocation
 import java.io.IOException
 
 class RenderExporter {
@@ -43,14 +42,14 @@ class RenderExporter {
         }
     }
 
-    private fun exportImage(parent: String, entryId: ResourceLocation, nativeImage: NativeImage) {
+    private fun exportImage(parent: String, entryId: String, nativeImage: NativeImage) {
         try {
+            val path = XEIExporter.EXPORT_ASSETS_DIR
+                .resolve(parent)
+                .resolve("${entryId}.png")
+            path.parent.toFile().mkdirs()
             nativeImage.writeToFile(
-                resourceLocationToPath(
-                    XEIExporter.EXPORT_ASSETS_DIR.resolve(parent),
-                    entryId,
-                    ".png"
-                )
+                path
             )
         } catch (e: IOException) {
             e.printStackTrace()

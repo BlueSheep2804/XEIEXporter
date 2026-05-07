@@ -145,7 +145,7 @@ repositories {
 }
 
 dependencies {
-//    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 
     implementation("thedarkcolour:kotlinforforge:4.12.0")
 
@@ -170,15 +170,15 @@ dependencies {
     "modLocalRuntime"("maven.modrinth:mantle:1.11.104")
 }
 
-//mixin {
-//    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
-//    config("${ModInfo.mod_id}.mixins.json")
-//}
+mixin {
+    add(sourceSets["main"], "${ModInfo.mod_id}.refmap.json")
+    config("${ModInfo.mod_id}.mixins.json")
+}
 
 tasks.named<Jar>("jar").configure {
-//    manifest.attributes(mapOf(
-//            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
-//    ))
+    manifest.attributes(mapOf(
+            "MixinConfigs" to "${ModInfo.mod_id}.mixins.json"
+    ))
 
     from("LICENSE_pgjdbc")
     from("LICENSE") {
@@ -192,17 +192,17 @@ tasks.jarJar {
 
 var generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     var replaceProperties = mapOf(
-            "minecraft_version" to ModInfo.minecraft_version,
-            "minecraft_version_range" to ModInfo.minecraft_version_range,
-            "forge_version" to ModInfo.forge_version,
-            "forge_version_range" to ModInfo.forge_version_range,
-            "loader_version_range" to ModInfo.loader_version_range,
-            "mod_id" to ModInfo.mod_id,
-            "mod_name" to ModInfo.mod_name,
-            "mod_license" to ModInfo.mod_license,
-            "mod_version" to ModInfo.mod_version,
-            "mod_authors" to ModInfo.mod_authors,
-            "mod_description" to ModInfo.mod_description
+        "minecraft_version" to ModInfo.minecraft_version,
+        "minecraft_version_range" to ModInfo.minecraft_version_range,
+        "forge_version" to ModInfo.forge_version,
+        "forge_version_range" to ModInfo.forge_version_range,
+        "loader_version_range" to ModInfo.loader_version_range,
+        "mod_id" to ModInfo.mod_id,
+        "mod_name" to ModInfo.mod_name,
+        "mod_license" to ModInfo.mod_license,
+        "mod_version" to ModInfo.mod_version,
+        "mod_authors" to ModInfo.mod_authors,
+        "mod_description" to ModInfo.mod_description
     )
     inputs.properties(replaceProperties)
     expand(replaceProperties)
