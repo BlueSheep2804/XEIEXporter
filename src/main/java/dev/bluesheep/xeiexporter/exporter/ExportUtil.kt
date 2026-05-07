@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.bluesheep.xeiexporter.XEIExporter
 import dev.bluesheep.xeiexporter.XEIExporter.EXPORT_ASSETS_DIR
+import dev.bluesheep.xeiexporter.exporter.ingredient.IngredientExporter
 import dev.bluesheep.xeiexporter.exporter.recipe.RecipeExporter
 import dev.bluesheep.xeiexporter.exporter.resources.LanguageExporter
 import dev.bluesheep.xeiexporter.exporter.resources.RenderExporter
@@ -25,9 +26,10 @@ import java.util.concurrent.CompletableFuture
 import kotlin.reflect.jvm.jvmName
 
 object ExportUtil {
+    val UNKNOWN = rl("unknown")
+
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val recipeExporter = RecipeExporter()
-    private val tagExporter = TagExporter()
     private val renderExporter = Lazy.of { RenderExporter() }
 
     private var serverPlayer: ServerPlayer? = null
@@ -42,14 +44,11 @@ object ExportUtil {
                 val modCount = ModInfoExporter.export()
                 dataLogComplete("mod", modCount)
 
-                dataLogStart("registry")
-                ItemExporter.exportItems()
-                FluidExporter.export()
-                dataLogComplete("registry", 0, "")  // TODO: レジストリをアドオン式にしたときに修正
+                dataLogStart("ingredient")
+                IngredientExporter.export()
 
                 dataLogStart("tag")
-                tagExporter.export()
-                dataLogComplete("tag", 0, "")  // TODO: タグをアドオン式にしたときに修正
+                TagExporter.export()
 
                 dataLogStart("recipe")
                 val recipeCount = recipeExporter.exportRecipes()
@@ -94,6 +93,7 @@ object ExportUtil {
 
     fun dataLogStart(key: String) = logStart(::sendSystemMessage, key)
     fun dataLogComplete(key: String, vararg args: Any) = logComplete(::sendSystemMessage, key, *args)
+    fun dataLogWarning(key: String, vararg args: Any) = logWarning(::sendSystemMessage, key, *args)
 
     fun exportAsset() {
         EXPORT_ASSETS_DIR.toFile().mkdirs()
@@ -116,6 +116,7 @@ object ExportUtil {
 
     fun assetLogStart(key: String) = logStart(::sendSystemMessageToClient, key)
     fun assetLogComplete(key: String, vararg args: Any) = logComplete(::sendSystemMessageToClient, key, *args)
+    fun assetLogWarning(key: String, vararg args: Any) = logWarning(::sendSystemMessageToClient, key, *args)
 
     @JvmStatic
     fun saveExportFile(src: Any?, path: Path) {
@@ -175,11 +176,28 @@ object ExportUtil {
         return ResourceLocation.fromNamespaceAndPath("jei", path)
     }
 
+    @JvmStatic
+    fun hoverIngredientTypeUid(uid: String): Component {
+        return if (uid.contains('.')) {
+            val shortUid = uid.split('.').last()
+            Component.literal(shortUid)
+                .withStyle(Style.EMPTY.withHoverEvent(
+                    HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(uid))
+                ))
+        } else {
+            Component.literal(uid)
+        }
+    }
+
     private fun logStart(send: (Component) -> Unit, key: String) {
         send(Component.translatable("xeiexporter.${key}.start"))
     }
 
     private fun logComplete(send: (Component) -> Unit, key: String, vararg args: Any) {
         send(Component.translatable("xeiexporter.${key}.complete", *args).withStyle(ChatFormatting.GREEN))
+    }
+
+    private fun logWarning(send: (Component) -> Unit, key: String, vararg args: Any) {
+        send(Component.translatable("xeiexporter.${key}", *args).withStyle(ChatFormatting.YELLOW))
     }
 }

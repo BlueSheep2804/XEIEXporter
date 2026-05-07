@@ -1,7 +1,6 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
-import dev.bluesheep.xeiexporter.api.recipe.RecipeStackData
 import mezz.jei.api.ingredients.ITypedIngredient
 import java.util.Optional
 
@@ -14,19 +13,17 @@ object RecipeSlot {
 
             val tag = ingredientHelper?.getTagKeyEquivalent(ingredientList.map { it.ingredient }) ?: Optional.empty()
             if (tag.isPresent) {
-                val first = RecipeIngredient.getIngredient(ingredientList.first())
-                val firstAmount = ingredientHelper?.getAmount(ingredientList.first().ingredient) ?: 0
+                val first = RecipeStackData.fromIngredient(ingredientList.first())
                 val allCountsMatch = ingredientList.all {
-                    firstAmount == (ingredientHelper?.getAmount(it.ingredient) ?: 0)
+                    first.amount == (ingredientHelper?.getAmount(it.ingredient)?.toInt() ?: 0)
                 }
 
                 if (allCountsMatch) {
                     return listOf(
                         RecipeStackData(
-                            first.entryType.toString(),
+                            first.type,
                             "#${tag.get().location}",
-                            firstAmount.toInt(),
-                            1f
+                            amount = first.amount
                         )
                     )
                 }
@@ -38,7 +35,7 @@ object RecipeSlot {
     fun fromTypedIngredients(ingredientList: List<ITypedIngredient<*>>): List<RecipeStackData> {
         return ingredientList.map {
             RecipeStackData.fromIngredient(
-                RecipeIngredient.getIngredient(it)
+                it
             )
         }
     }

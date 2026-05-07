@@ -1,8 +1,12 @@
 package dev.bluesheep.xeiexporter
 
 import com.mojang.logging.LogUtils
+import dev.bluesheep.xeiexporter.api.event.RegisterIngredientExtraHelperEvent
+import dev.bluesheep.xeiexporter.api.event.RegisterTagEvent
 import dev.bluesheep.xeiexporter.debug.DebugRegister
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
+import dev.bluesheep.xeiexporter.exporter.TagExporter
+import dev.bluesheep.xeiexporter.exporter.ingredient.IngredientExporter
 import net.minecraft.commands.Commands
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RegisterClientCommandsEvent
@@ -11,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.config.ModConfig
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.fml.loading.FMLPaths
 import org.slf4j.Logger
@@ -42,6 +47,18 @@ object XEIExporter {
         }
 
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Config.SPEC)
+
+        ApiImpl.init()
+        modEventBus.addListener(this::commonRegister)
+    }
+
+    fun commonRegister(event: FMLCommonSetupEvent) {
+        val modEventBus = MOD_CONTEXT.getKEventBus()
+        val registerIngredientExtraHelperEvent = RegisterIngredientExtraHelperEvent(IngredientExporter.extraHelpers)
+        modEventBus.post(registerIngredientExtraHelperEvent)
+
+        val registerTagEvent = RegisterTagEvent(TagExporter.tagRegistries)
+        modEventBus.post(registerTagEvent)
     }
 
     @SubscribeEvent

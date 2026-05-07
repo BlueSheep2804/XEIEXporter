@@ -1,22 +1,38 @@
 package dev.bluesheep.xeiexporter.exporter.resources
 
 import com.mojang.blaze3d.platform.NativeImage
+import dev.bluesheep.xeiexporter.JEIExporterPlugin
 import dev.bluesheep.xeiexporter.XEIExporter
+import dev.bluesheep.xeiexporter.api.renderer.IRenderer
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
-import dev.bluesheep.xeiexporter.exporter.ExportUtil.resourceLocationToPath
-import net.minecraft.resources.ResourceLocation
+import mezz.jei.api.ingredients.IIngredientType
 import java.io.IOException
 
 class RenderExporter {
     private val renderers = mutableListOf<IRenderer>()
 
     init {
-        renderers.add(ItemRenderer())
-        renderers.add(FluidRenderer())
         renderers.add(RecipeCategoryRenderer())
+
+        val ingredientManager = JEIExporterPlugin.runtime?.ingredientManager
+        ingredientManager?.registeredIngredientTypes?.forEach { ingredientType ->
+            renderers.add(
+                JEIIngredientRenderer(
+                    ingredientType.uid,
+                    ingredientManager.getAllIngredients(ingredientType).toList(),
+                    ingredientManager.getIngredientHelper(ingredientType as IIngredientType<Any>),
+                    ingredientManager.getIngredientRenderer(ingredientType)
+                )
+            )
+        }
     }
 
     fun export() {
+        // 空の画像を出力
+        val emptyImage = NativeImage(64, 64, true)
+        exportImage("item_stack", "minecraft/air", emptyImage)
+        emptyImage.close()
+
         renderers.forEach { renderer ->
             var count = 0
             renderer.entries.forEach { (location, image) ->
@@ -31,14 +47,14 @@ class RenderExporter {
         }
     }
 
-    private fun exportImage(parent: String, entryId: ResourceLocation, nativeImage: NativeImage) {
+    private fun exportImage(parent: String, entryId: String, nativeImage: NativeImage) {
         try {
+            val path = XEIExporter.EXPORT_ASSETS_DIR
+                .resolve(parent)
+                .resolve("${entryId}.png")
+            path.parent.toFile().mkdirs()
             nativeImage.writeToFile(
-                resourceLocationToPath(
-                    XEIExporter.EXPORT_ASSETS_DIR.resolve(parent),
-                    entryId,
-                    ".png"
-                )
+                path
             )
         } catch (e: IOException) {
             e.printStackTrace()

@@ -1,6 +1,6 @@
 package dev.bluesheep.xeiexporter.sql
 
-import dev.bluesheep.xeiexporter.api.recipe.RecipeStackData
+import dev.bluesheep.xeiexporter.exporter.recipe.RecipeStackData
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.json.jsonb

@@ -1,4 +1,4 @@
-package dev.bluesheep.xeiexporter.exporter.resources
+package dev.bluesheep.xeiexporter.api.renderer
 
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.pipeline.TextureTarget
@@ -8,16 +8,15 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexSorting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix4f
 
 abstract class AbstractRenderSystemRenderer : IRenderer {
-    override val entries: Map<ResourceLocation, NativeImage>
+    override val entries: Map<String, NativeImage>
         get() = renderByRenderSystem()
 
-    protected abstract val renderList: Map<ResourceLocation, (GuiGraphics) -> Unit>
+    protected abstract val renderList: Map<String, (GuiGraphics) -> Unit>
 
-    protected fun renderByRenderSystem(): Map<ResourceLocation, NativeImage> {
+    protected fun renderByRenderSystem(): Map<String, NativeImage> {
         val minecraft = Minecraft.getInstance()
 
         val renderTarget: RenderTarget = TextureTarget(64, 64, true, Minecraft.ON_OSX)
@@ -32,7 +31,7 @@ abstract class AbstractRenderSystemRenderer : IRenderer {
             3000.0f
         )
 
-        val imageMap: MutableMap<ResourceLocation, NativeImage> = mutableMapOf()
+        val imageMap: MutableMap<String, NativeImage> = mutableMapOf()
         renderList.forEach { (key, value) ->
             RenderSystem.clear(16640, Minecraft.ON_OSX)
 
