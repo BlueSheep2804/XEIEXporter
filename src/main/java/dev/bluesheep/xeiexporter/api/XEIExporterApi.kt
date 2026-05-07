@@ -30,6 +30,7 @@ abstract class XEIExporterApi {
     abstract fun createRecipeStackData(
         type: String,
         entry: String,
+        uniqueId: String = "",
         amount: Long = 1,
         chance: Float = 1f
     ): IRecipeStackData

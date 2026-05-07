@@ -23,8 +23,7 @@ object RecipeSlot {
                         RecipeStackData(
                             first.type,
                             "#${tag.get().location}",
-                            first.amount,
-                            1f
+                            amount = first.amount
                         )
                     )
                 }

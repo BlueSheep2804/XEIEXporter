@@ -29,12 +29,14 @@ object ApiImpl : XEIExporterApi() {
     override fun createRecipeStackData(
         type: String,
         entry: String,
+        uniqueId: String,
         amount: Long,
         chance: Float
     ): IRecipeStackData {
         return RecipeStackData(
             type,
             entry,
+            uniqueId,
             amount,
             chance
         )
