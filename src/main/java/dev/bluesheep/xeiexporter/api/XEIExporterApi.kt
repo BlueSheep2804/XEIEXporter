@@ -2,7 +2,6 @@ package dev.bluesheep.xeiexporter.api
 
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeData
 import dev.bluesheep.xeiexporter.api.recipe.IRecipeStackData
-import dev.bluesheep.xeiexporter.exporter.recipe.RecipeStackData
 import net.minecraft.resources.ResourceLocation
 
 abstract class XEIExporterApi {
@@ -25,8 +24,8 @@ abstract class XEIExporterApi {
     abstract fun createRecipeData(
         id: ResourceLocation,
         type: ResourceLocation,
-        input: List<List<RecipeStackData>>,
-        output: List<List<RecipeStackData>>
+        input: List<List<IRecipeStackData>>,
+        output: List<List<IRecipeStackData>>
     ): IRecipeData
 
     abstract fun createRecipeStackData(

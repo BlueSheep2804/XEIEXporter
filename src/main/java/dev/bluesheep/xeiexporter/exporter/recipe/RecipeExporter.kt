@@ -1,6 +1,8 @@
 package dev.bluesheep.xeiexporter.exporter.recipe
 
 import dev.bluesheep.xeiexporter.JEIExporterPlugin
+import dev.bluesheep.xeiexporter.api.recipe.IRecipeData
+import dev.bluesheep.xeiexporter.api.recipe.IRecipeModifier
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlJei
 import dev.bluesheep.xeiexporter.exporter.ExportUtil.rlVanilla
@@ -14,7 +16,8 @@ import net.minecraft.resources.ResourceLocation
 import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-class RecipeExporter {
+object RecipeExporter {
+    lateinit var recipeModifiers: Map<RecipeType<Any>, List<IRecipeModifier<Any>>>
     private val blackList = listOf(
         rlJei("debug"),
         rlJei("debug_focus"),
@@ -27,7 +30,6 @@ class RecipeExporter {
     fun exportRecipes(): Int {
         val runtime = JEIExporterPlugin.runtime ?: return 0
 
-        val recipeTypeSlots = mutableMapOf<ResourceLocation, Pair<Int, Int>>()
         // 登録されているレシピをRecipeDataとして出力
         val recipes = runtime.jeiHelpers.allRecipeTypes.flatMap { recipeType ->
             if (blackList.contains(recipeType.uid)) return@flatMap null
@@ -38,8 +40,6 @@ class RecipeExporter {
             val category = runtime.recipeManager.getRecipeCategory(castRecipeType)
             val recipeLookup = runtime.recipeManager.createRecipeLookup(castRecipeType).get()
 
-            recipeTypeSlots.put(recipeTypeId, Pair(0, 0))
-
             return@flatMap recipeLookup.map { recipe ->
                 val layout = runtime.recipeManager.createRecipeLayoutDrawable(
                     category,
@@ -48,17 +48,6 @@ class RecipeExporter {
                 )
 
                 val slotsView = layout.get().recipeSlotsView
-                // スロットの数を保持しておく
-                val slotsCount = recipeTypeSlots[recipeTypeId]!!
-                val inputSize = slotsView.getSlotViews(RecipeIngredientRole.INPUT).count()
-                val outputSize = slotsView.getSlotViews(RecipeIngredientRole.OUTPUT).count()
-                if (slotsCount.first < inputSize) {
-                    recipeTypeSlots.put(recipeTypeId, slotsCount.copy(first = inputSize))
-                }
-                if (slotsCount.second < outputSize) {
-                    recipeTypeSlots.put(recipeTypeId, slotsCount.copy(second = outputSize))
-                }
-
                 val input = slotsView.getSlotViews(RecipeIngredientRole.INPUT).map { slot ->
                     RecipeSlot.createFrom(slot.allIngredients.toList())
                 }
@@ -68,12 +57,20 @@ class RecipeExporter {
 
                 val recipeId = category.getRegistryName(recipe)
                     ?: ExportUtil.rl("${recipeTypeId.toString().replace(':', '_')}/")
-                return@map RecipeData(
+
+                val default: IRecipeData = RecipeData(
                     recipeId,
                     recipeTypeId,
                     input,
                     output
                 )
+                var current = default
+                val modifiers = recipeModifiers[castRecipeType]
+                modifiers?.forEach { modifier ->
+                    current = modifier.modify(recipe, current, default)
+                }
+
+                return@map current
             }
         }.toList()
 
@@ -93,12 +90,14 @@ class RecipeExporter {
                 titleComponent.fallback ?: ""
             } else title.string
 
-            val slot = recipeTypeSlots[recipeType.uid]!!
+//            val slot = recipeTypeSlots[recipeType.uid]!!
             recipeTypes.add(RecipeTypeData(
                 recipeType.uid,
                 catalyst,
-                slot.first,
-                slot.second,
+//                slot.first,
+//                slot.second,
+                0,
+                0,
                 titleKey,
                 titleFallback
             ))
@@ -112,8 +111,8 @@ class RecipeExporter {
                 this[RecipesTable.namespace] = it.id.namespace
                 this[RecipesTable.path] = it.id.path
                 this[RecipesTable.type] = it.type.toString()
-                this[RecipesTable.input] = it.input
-                this[RecipesTable.output] = it.output
+                this[RecipesTable.input] = it.input as List<List<RecipeStackData>>
+                this[RecipesTable.output] = it.output as List<List<RecipeStackData>>
             }
 
             DatabaseUtil.reset(RecipeTypeTable)

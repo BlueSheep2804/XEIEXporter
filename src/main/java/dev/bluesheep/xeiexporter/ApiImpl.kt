@@ -15,8 +15,8 @@ object ApiImpl : XEIExporterApi() {
     override fun createRecipeData(
         id: ResourceLocation,
         type: ResourceLocation,
-        input: List<List<RecipeStackData>>,
-        output: List<List<RecipeStackData>>
+        input: List<List<IRecipeStackData>>,
+        output: List<List<IRecipeStackData>>
     ): IRecipeData {
         return RecipeData(
             id,

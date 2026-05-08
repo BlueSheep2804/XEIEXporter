@@ -2,16 +2,22 @@ package dev.bluesheep.xeiexporter
 
 import com.mojang.logging.LogUtils
 import dev.bluesheep.xeiexporter.api.event.RegisterIngredientExtraHelperEvent
+import dev.bluesheep.xeiexporter.api.event.RegisterRecipeModifierEvent
 import dev.bluesheep.xeiexporter.api.event.RegisterTagEvent
+import dev.bluesheep.xeiexporter.api.recipe.IRecipeModifier
+import dev.bluesheep.xeiexporter.compat.mekanism.MekanismEventHandler
 import dev.bluesheep.xeiexporter.debug.DebugRegister
 import dev.bluesheep.xeiexporter.exporter.ExportUtil
 import dev.bluesheep.xeiexporter.exporter.TagExporter
 import dev.bluesheep.xeiexporter.exporter.ingredient.IngredientExporter
+import dev.bluesheep.xeiexporter.exporter.recipe.RecipeExporter
+import mezz.jei.api.recipe.RecipeType
 import net.minecraft.commands.Commands
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RegisterClientCommandsEvent
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.config.ModConfig
@@ -50,6 +56,14 @@ object XEIExporter {
 
         ApiImpl.init()
         modEventBus.addListener(this::commonRegister)
+
+        registerIfLoaded("mekanism", MekanismEventHandler)
+    }
+
+    private fun registerIfLoaded(modid: String, target: Any) {
+        if (ModList.get().isLoaded(modid)) {
+            MOD_CONTEXT.getKEventBus().register(target)
+        }
     }
 
     fun commonRegister(event: FMLCommonSetupEvent) {
@@ -59,6 +73,11 @@ object XEIExporter {
 
         val registerTagEvent = RegisterTagEvent(TagExporter.tagRegistries)
         modEventBus.post(registerTagEvent)
+
+        val registeredRecipeModifiers = mutableMapOf<RecipeType<Any>, MutableList<IRecipeModifier<Any>>>()
+        val registerRecipeModifierEvent = RegisterRecipeModifierEvent(registeredRecipeModifiers)
+        modEventBus.post(registerRecipeModifierEvent)
+        RecipeExporter.recipeModifiers = registeredRecipeModifiers
     }
 
     @SubscribeEvent

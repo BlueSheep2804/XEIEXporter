@@ -29,7 +29,6 @@ object ExportUtil {
     val UNKNOWN = rl("unknown")
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val recipeExporter = RecipeExporter()
     private val renderExporter = Lazy.of { RenderExporter() }
 
     private var serverPlayer: ServerPlayer? = null
@@ -51,7 +50,7 @@ object ExportUtil {
                 TagExporter.export()
 
                 dataLogStart("recipe")
-                val recipeCount = recipeExporter.exportRecipes()
+                val recipeCount = RecipeExporter.exportRecipes()
                 dataLogComplete("recipe", recipeCount)
             } catch (e: Exception) {
                 when (e) {
