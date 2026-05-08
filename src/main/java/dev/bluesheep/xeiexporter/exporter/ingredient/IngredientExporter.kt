@@ -23,11 +23,16 @@ object IngredientExporter {
 
             val ingredientTypes = ingredientManager?.registeredIngredientTypes?.map { ingredientType ->
                 val extraHelper = extraHelpers[ingredientType.ingredientClass] as IIngredientExtraHelper<Any>?
-                return@map ingredientType.uid to (extraHelper?.ingredientNameKey ?: "")
+                return@map IngredientTypeData(
+                    ingredientType.uid,
+                    extraHelper?.ingredientNameKey ?: "",
+                    extraHelper?.isMilliUnit ?: false
+                )
             } ?: emptyList()
             IngredientTypeTable.batchInsert(ingredientTypes) {
-                this[IngredientTypeTable.id] = it.first
-                this[IngredientTypeTable.translationKey] = it.second
+                this[IngredientTypeTable.id] = it.id
+                this[IngredientTypeTable.translationKey] = it.translationKey
+                this[IngredientTypeTable.isMilliUnit] = it.isMilliUnit
             }
 
             DatabaseUtil.reset(IngredientTable)
@@ -65,4 +70,10 @@ object IngredientExporter {
             }
         }
     }
+
+    private data class IngredientTypeData(
+        val id: String,
+        val translationKey: String,
+        val isMilliUnit: Boolean
+    )
 }
