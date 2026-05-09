@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 /**
  * FluidStackのサブタイプの有無を修正するMixin
  * */
-@Mixin(FluidIngredientHelper.class)
+@Mixin(value = FluidIngredientHelper.class, remap = false)
 public abstract class FluidIngredientHelperMixin<T> implements IIngredientHelper<T> {
     @Shadow @Final private ISubtypeManager subtypeManager;
 
