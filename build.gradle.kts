@@ -26,7 +26,7 @@ object ModInfo {
     const val mod_id = "xeiexporter"
     const val mod_name = "XEIEXporter"
     const val mod_license = "MIT"
-    const val mod_version = "0.1.0"
+    const val mod_version = "0.2.0"
     const val mod_group_id = "dev.bluesheep"
     const val mod_authors = "BlueSheep"
     const val mod_description = ""
